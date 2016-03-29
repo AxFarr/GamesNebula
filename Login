@@ -1,7 +1,11 @@
 from tkinter import *
 import tkinter.messagebox as tm
 
-users = {'username': 'password'}
+
+import sqlite3
+
+db = sqlite3.connect("game nebula.db")
+c = db.cursor()
 
 
 class LoginFrame(Frame):
@@ -36,16 +40,23 @@ class LoginFrame(Frame):
         else:
 
             def CheckUserExists(username):
-             with open ('Users.txt', 'r') as file:
-                 if re.search(username + " " + password + " ", file.read()):
+                if c.execute("SELECT name FROM UserData WHERE name = ?", (username,)):
+                   data = c.fetchall()
+                   if not data:
+                       return False
+                   else:
                        return True
-                 else:
-                      return False
+                   
+            def CheckPassExists(password):
+                if c.execute("SELECT password FROM UserData WHERE password = ?", (password,)):
+                    data = c.fetchall()
+                    if not data:
+                        return False
+                    else:
+                        return True
 
 
-            infile = open('Users.txt', 'r')
-            print(infile.read())
-            if CheckUserExists(username) == True:
+            if CheckUserExists(username) is True and CheckPassExists(password) is True:
                 print("Login Commplete")
             else:
                 print("Username or password is incorrect")
@@ -56,3 +67,5 @@ class LoginFrame(Frame):
 root = Tk()
 lf = LoginFrame(root)
 root.mainloop()
+
+
