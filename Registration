@@ -18,8 +18,6 @@ class RegistrationFrame(Frame):
         self.EmailLabel = Label(self, text="Enter email")
         self.ConsoleLabel = Label(self, text="Check all consoles you own")
 
-
-
         self.UserEntry = Entry(self)
         self.PassEntry = Entry(self, show="*")
         self.PassReEntry = Entry(self, show="*")
@@ -54,9 +52,7 @@ class RegistrationFrame(Frame):
         self.regbtn = Button(self, text="Register", command = self._registration_btn_clickked)
         self.regbtn.grid(columnspan=2)
 
-
         self.pack()
-
 
     def _registration_btn_clickked(self):
         username = self.UserEntry.get()
@@ -75,6 +71,19 @@ class RegistrationFrame(Frame):
             print("No special characters allowed in username or password!")
 
         else:
+
+            #Used to pass consoles user owns to user object
+            console = []
+
+            if self.v1.get() == 1:
+                    console.append('Xbox 360')
+            if self.v2.get() == 1:
+                    console.append('Xbox One')
+            if self.v3.get() == 1:
+                    console.append('PS3')
+            if self.v4.get() == 1:
+                    console.append('PS4')
+
 
             def CheckRegExists(username):
                 c.execute("SELECT name FROM UserData WHERE name=?", (username,))
@@ -96,21 +105,7 @@ class RegistrationFrame(Frame):
                     db.commit()
 
 
-                    #Used to pass consoles user owns to user object
-                    console = []
 
-                    if self.v1.get() == 1:
-                        console.append('Xbox 360')
-                        c.execute('INSERT INTO UserData (Consoles) VALUES ("Xbox 360")')
-                    if self.v2.get() == 1:
-                        console.append('Xbox One')
-                        c.execute('INSERT INTO UserData (Consoles) VALUES ("Xbox One")')
-                    if self.v3.get() == 1:
-                        console.append('PS3')
-                        c.execute('INSERT INTO UserData (Consoles) VALUES ("PS3")')
-                    if self.v4.get() == 1:
-                        console.append('PS4')
-                        c.execute('INSERT INTO UserData (Consoles) VALUES ("PS4")')
                     Users.create_user(username, password, email, console)
                     db.commit()
                     db.close()
