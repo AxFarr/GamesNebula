@@ -39,25 +39,18 @@ class LoginFrame(Frame):
             print("Null Entry")
         else:
 
-            def CheckUserExists(username):
-                if c.execute("SELECT name FROM UserData WHERE name = ?", (username,)):
+            def CheckUserExists(username, password):
+                if c.execute("SELECT password FROM UserData WHERE name = ? AND password = ?",  (username, password)):
                    data = c.fetchall()
                    if not data:
                        return False
                    else:
                        return True
-                   
-            def CheckPassExists(password):
-                if c.execute("SELECT password FROM UserData WHERE password = ?", (password,)):
-                    data = c.fetchall()
-                    if not data:
-                        return False
-                    else:
-                        return True
 
 
-            if CheckUserExists(username) is True and CheckPassExists(password) is True:
-                print("Login Commplete")
+
+            if CheckUserExists(username, password) is True:
+                print("Login Commplete. Welcome " + username + "!")
             else:
                 print("Username or password is incorrect")
 
