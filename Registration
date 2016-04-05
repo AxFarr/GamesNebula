@@ -74,15 +74,23 @@ class RegistrationFrame(Frame):
 
             #Used to pass consoles user owns to user object
             console = []
+            hasX360 = 'No'
+            hasXOne = 'No'
+            hasPS3 = 'No'
+            hasPS4 = 'No'
 
             if self.v1.get() == 1:
                     console.append('Xbox 360')
+                    hasX360 = 'Yes'
             if self.v2.get() == 1:
                     console.append('Xbox One')
+                    hasXOne = 'Yes'
             if self.v3.get() == 1:
                     console.append('PS3')
+                    hasPS3 = 'Yes'
             if self.v4.get() == 1:
                     console.append('PS4')
+                    hasPS4 = 'Yes'
 
 
             def CheckRegExists(username):
@@ -102,6 +110,7 @@ class RegistrationFrame(Frame):
                 else:
                     print("Registration Successful")
                     c.execute('INSERT INTO UserData VALUES (?,?,?,?)', (username, password, email, ""))
+                    c.execute('INSERT INTO UserPref VALUES (?,?,?,?,?)', (username, hasX360, hasXOne, hasPS3, hasPS4 ))
                     db.commit()
 
 
