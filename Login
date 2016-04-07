@@ -9,6 +9,8 @@ c = db.cursor()
 
 class LoginFrame(Frame):
     def __init__(self, master):
+        Frame.__init__(self, master)
+        self.pack()
         super().__init__(master)
 
         self.label_1 = Label(self, text="Username")
@@ -64,5 +66,6 @@ class LoginFrame(Frame):
 
 
 root = Tk()
-lf = LoginFrame(root)
+ft = LoginFrame(master=root)
+ft.master.title("Games Nebula")
 root.mainloop()
