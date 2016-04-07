@@ -111,7 +111,7 @@ class RegistrationFrame(Frame):
                     print("Passwords don't match")
                 else:
                     print("Registration Successful")
-                    c.execute('INSERT INTO UserData VALUES (?,?,?,?)', (username, password, email, ""))
+                    c.execute('INSERT INTO UserData VALUES (?,?,?)', (username, password, email))
                     c.execute('INSERT INTO UserPref VALUES (?,?,?,?,?)', (username, hasX360, hasXOne, hasPS3, hasPS4 ))
                     db.commit()
 
