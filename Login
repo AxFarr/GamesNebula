@@ -1,5 +1,4 @@
 from tkinter import *
-import tkinter.messagebox as tm
 
 
 import sqlite3
@@ -10,9 +9,8 @@ c = db.cursor()
 
 class LoginFrame(Frame):
     def __init__(self, master):
-        Frame.__init__(self, master)
-        self.pack()
         super().__init__(master)
+
         self.label_1 = Label(self, text="Username")
         self.label_2 = Label(self, text="Password")
 
@@ -28,7 +26,9 @@ class LoginFrame(Frame):
         self.checkbox.grid(columnspan=2)
 
         self.logbtn = Button(self, text="Login", command = self._login_btn_clickked)
+        self.regbtn = Button(self, text="Register", command=self._register_btn_clickked)
         self.logbtn.grid(columnspan=2)
+        self.regbtn.grid(columnspan=4)
 
         self.pack()
 
@@ -55,8 +55,14 @@ class LoginFrame(Frame):
             else:
                 print("Username or password is incorrect")
 
+    def _register_btn_clickked(self):
+        from Registration import RegistrationFrame
+
+
+
+
+
 
 root = Tk()
-ft = LoginFrame(master=root)
-ft.master.title("Games Nebula")
+lf = LoginFrame(root)
 root.mainloop()
