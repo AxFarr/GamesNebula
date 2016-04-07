@@ -10,6 +10,8 @@ c = db.cursor()
 
 class RegistrationFrame(Frame):
     def __init__(self, master):
+        Frame.__init__(self, master)
+        self.pack()
         super().__init__(master)
 
         self.UserLabel = Label(self, text="Enter username")
@@ -123,5 +125,6 @@ class RegistrationFrame(Frame):
 
 
 root = Tk()
-lf = RegistrationFrame(root)
+ft = RegistrationFrame(master=root)
+ft.master.title("Games Nebula")
 root.mainloop()
