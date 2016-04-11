@@ -1,5 +1,10 @@
 from tkinter import *
+import tkinter.messagebox as tm
 import sqlite3
+from Popup import *
+import Users
+import re
+
 
 db = sqlite3.connect("game nebula.db")
 c = db.cursor()
@@ -10,9 +15,9 @@ class LoginFrame(Frame):
         Frame.__init__(self, master)
 
         self.master = master
-        self.initUI()
+        self.logUI()
 
-    def initUI(self):
+    def logUI(self):
 
             self.master.title("Login")
             self.pack(fill=BOTH, expand=True)
@@ -38,13 +43,13 @@ class LoginFrame(Frame):
             frame3 = Frame(self)
             frame3.pack(fill=X)
 
-            self.logbtn = Button(self, text="Login", command = self._login_btn_clickked)
+            self.logbtn = Button(self, text="Login", fg='green', command = self._login_btn_clicked)
             self.logbtn.pack(padx=5, pady=2)
-            self.regbtn = Button(self, text="Register", command=self._register_btn_clickked)
+            self.regbtn = Button(self, text="Register", command=self._register_btn_clicked)
             self.regbtn.pack(padx=5, pady=2)
 
 
-    def _login_btn_clickked(self):
+    def _login_btn_clicked(self):
         username = self.entry_1.get()
         password = self.entry_2.get()
 
@@ -68,7 +73,7 @@ class LoginFrame(Frame):
             else:
                 print("Username or password is incorrect")
 
-    def _register_btn_clickked(self):
+    def _register_btn_clicked(self):
         from Registration import RegistrationFrame
 
 
