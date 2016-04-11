@@ -53,7 +53,8 @@ class LoginFrame(Frame):
 
 
             if CheckUserExists(username, password) is True:
-                print("Login Commplete. Welcome " + username + "!")
+                print("Login Complete. Welcome " + username + "!")
+                from Main import MainFrame
             else:
                 print("Username or password is incorrect")
 
