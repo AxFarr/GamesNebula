@@ -1,0 +1,52 @@
+from tkinter import *
+import tkinter.messagebox as tm
+
+import Users
+import re
+import sqlite3
+
+db = sqlite3.connect('game nebula.db')
+c = db.cursor()
+
+
+class MainFrame(Frame):
+    def __init__(self, master):
+        super().__init__(master)
+
+        self.label_1 = Label(self, text="Game Name")
+
+        self.entry_1 = Entry(self)
+
+        self.label_1.grid(row=0, sticky=E)
+        self.entry_1.grid(row=0, column=1)
+
+        self.searchbtn = Button(self, text="Browse Games", command = self._search_btn_clickked)
+        self.searchbtn.grid(columnspan=2)
+
+        self.pack()
+
+    def _search_btn_clickked(self):
+        gamename = self.entry_1.get()
+
+        if len(self.entry_1.get()) == 0:
+            print("Null Entry")
+        else:
+
+                 def CheckGameExists(gamename):
+                     if c.execute("SELECT name FROM games WHERE name=?", (gamename,)):
+                        data = c.fetchall()
+                     if not data:
+                         return False
+                     else:
+                         return True
+
+                 if CheckGameExists(gamename) == True:
+                        print("Game Found")
+                 else:
+                        print("Not Found")
+
+
+root = Tk()
+root.geometry("300x200+300+300")
+lf = MainFrame(root)
+root.mainloop()
