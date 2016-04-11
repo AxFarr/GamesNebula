@@ -28,30 +28,30 @@ class MainFrame(Frame):
         frame3 = Frame(self)
         frame3.pack(fill=X)
 
-        self.label_1 = Label(frame1, text="Welcome to Games Nebula")
+        self.label_1 = Label(frame1, text="Welcome to Games Nebula!", fg='green', relief='groove', width='40')
         self.label_1.pack(side=TOP, padx=5, pady=5)
 
-        self.searchbtn = Button(frame2, text="Browse Games", command = self._search_btn_clickked)
+        self.searchbtn = Button(frame2, text="Browse Games", fg='green', command = self._search_btn_clicked)
         self.searchbtn.pack(side=LEFT, padx=25, pady=10)
-        self.addbtn = Button(frame2, text="Add games", command=self._addbtn_btn_clickked)
+        self.addbtn = Button(frame2, text="Add games", fg='green', command=self._addbtn_btn_clicked)
         self.addbtn.pack(side=RIGHT, padx=25, pady=10)
-        self.updatebtn = Button(frame3, text="Update", command=self._update_btn_clickked)
+        self.updatebtn = Button(frame3, text="Update", fg='green', command=self._update_btn_clicked)
         self.updatebtn.pack(side=LEFT, padx=40, pady=10)
-        self.deletebtn = Button(frame3, text="Delete Games", command=self._delete_btn_clickked)
+        self.deletebtn = Button(frame3, text="Delete Games", fg='green', command=self._delete_btn_clicked)
         self.deletebtn.pack(side=RIGHT, padx=25, pady=10)
 
 
-    def _search_btn_clickked(self):
+    def _search_btn_clicked(self):
         print("Searching")
 
 
-    def _addbtn_btn_clickked(self):
+    def _addbtn_btn_clicked(self):
          print("Adding")
 
-    def _update_btn_clickked(self):
+    def _update_btn_clicked(self):
         print("Updating")
 
-    def _delete_btn_clickked(self):
+    def _delete_btn_clicked(self):
         print("Deleting")
 
 
