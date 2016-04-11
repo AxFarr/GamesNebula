@@ -1,5 +1,5 @@
 from tkinter import *
-
+from Popup import *
 
 import sqlite3
 
@@ -56,7 +56,7 @@ class LoginFrame(Frame):
                 print("Login Complete. Welcome " + username + "!")
                 from Main import MainFrame
             else:
-                print("Username or password is incorrect")
+                pu.onIncorrect()
 
     def _register_btn_clickked(self):
         from Registration import RegistrationFrame
@@ -67,6 +67,7 @@ class LoginFrame(Frame):
 
 
 root = Tk()
+pu = Popup(parent=root)
 ft = LoginFrame(master=root)
 ft.master.title("Games Nebula")
 root.mainloop()
