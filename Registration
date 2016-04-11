@@ -64,11 +64,11 @@ class RegistrationFrame(Frame):
            or len(self.PassReEntry.get()) == 0 or len(self.EmailEntry.get()) == 0 :
             print("Null Entry")
         elif len(username) > 14 or len(username) < 4 :
-            print("Username must be between 4 and 15 characters")
+            pu.onUserLength()
         elif len(password) > 14 or len(password) < 4:
-            print("Password must be between 4 and 15 characters")
+            pu.onPassLength()
         elif not re.match("^[0-z]*$", username) or not re.match("^[0-z]*$", password):
-            print("No special characters allowed in username or password!")
+            pu.onSpecialChar()
 
         else:
 
@@ -123,6 +123,7 @@ class RegistrationFrame(Frame):
 
 
 root = Tk()
+pu = Popup(parent=root)
 root.geometry("500x200+300+300")
 lf = RegistrationFrame(root)
 root.mainloop()
