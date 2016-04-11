@@ -11,39 +11,48 @@ c = db.cursor()
 
 class MainFrame(Frame):
     def __init__(self, master):
-        super().__init__(master)
+        Frame.__init__(self, master)
 
-        self.label_1 = Label(self, text="Game Name")
+        self.master = master
+        self.mainUI()
 
-        self.entry_1 = Entry(self)
+    def mainUI(self):
 
-        self.label_1.grid(row=0, sticky=E)
-        self.entry_1.grid(row=0, column=1)
+        self.master.title("Games Nebula")
+        self.pack(fill=BOTH, expand=True)
 
-        self.searchbtn = Button(self, text="Browse Games", command = self._search_btn_clickked)
-        self.searchbtn.grid(columnspan=2)
+        frame1 = Frame(self)
+        frame1.pack(fill=X)
+        frame2 = Frame(self)
+        frame2.pack(fill=X)
+        frame3 = Frame(self)
+        frame3.pack(fill=X)
 
-        self.pack()
+        self.label_1 = Label(frame1, text="Welcome to Games Nebula")
+        self.label_1.pack(side=TOP, padx=5, pady=5)
+
+        self.searchbtn = Button(frame2, text="Browse Games", command = self._search_btn_clickked)
+        self.searchbtn.pack(side=LEFT, padx=25, pady=10)
+        self.addbtn = Button(frame2, text="Add games", command=self._addbtn_btn_clickked)
+        self.addbtn.pack(side=RIGHT, padx=25, pady=10)
+        self.updatebtn = Button(frame3, text="Update", command=self._update_btn_clickked)
+        self.updatebtn.pack(side=LEFT, padx=40, pady=10)
+        self.deletebtn = Button(frame3, text="Delete Games", command=self._delete_btn_clickked)
+        self.deletebtn.pack(side=RIGHT, padx=25, pady=10)
+
 
     def _search_btn_clickked(self):
-        gamename = self.entry_1.get()
+        print("Searching")
 
-        if len(self.entry_1.get()) == 0:
-            print("Null Entry")
-        else:
 
-                 def CheckGameExists(gamename):
-                     if c.execute("SELECT name FROM games WHERE name=?", (gamename,)):
-                        data = c.fetchall()
-                     if not data:
-                         return False
-                     else:
-                         return True
+    def _addbtn_btn_clickked(self):
+         print("Adding")
 
-                 if CheckGameExists(gamename) == True:
-                        print("Game Found")
-                 else:
-                        print("Not Found")
+    def _update_btn_clickked(self):
+        print("Updating")
+
+    def _delete_btn_clickked(self):
+        print("Deleting")
 
 
 root = Tk()
