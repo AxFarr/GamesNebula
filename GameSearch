@@ -1,0 +1,84 @@
+from tkinter import *
+import tkinter.messagebox as tm
+
+import Users
+import re
+import sqlite3
+
+db = sqlite3.connect('game nebula.db')
+c = db.cursor()
+
+
+class GameFrame(Frame):
+    def __init__(self, master):
+        Frame.__init__(self, master)
+
+        self.master = master
+        self.gameUI()
+        
+    def gameUI(self):
+        Options = ["PS4", "XBoxOne", "WiiU", "PC", "Any"]
+
+        self.master.title("Game Search")
+        root.geometry('800x300')
+        root.resizable(width=FALSE, height=FALSE)
+        self.pack(fill = BOTH, expand = True)
+        
+        frame1 = Frame(self)
+        frame1.pack(fill=X)
+        frame2 = Frame(self)
+        frame2.pack(fill=X)
+        frame3 = Frame(self)
+        frame3.pack(fill=X)
+        frame4 = Frame(self)
+        frame4.pack(fill=X)
+        frame5 = Frame(self)
+        frame5.pack(fill=X)
+        frame6 = Frame(self)
+        frame6.pack(fill=X)
+        
+        self.plat_label = Label(frame1, text="Platform")
+        self.plat_label.pack(side=LEFT, padx=5, pady=5)
+        self.Title_label = Label(frame2, text="Title")
+        self.Title_label.pack(side=LEFT, padx=5, pady=20)
+        self.genre_label = Label(frame3, text="Genre")
+        self.genre_label.pack(side=LEFT, padx=5, pady=20)
+        self.rating_label = Label(frame4, text="Rating Level")
+        self.rating_label.pack(side=LEFT, padx=5, pady=20)
+        self.multi_label = Label(frame5, text="Multiplayer")
+        self.multi_label.pack(side=LEFT, padx=5, pady=20)
+        
+        var = StringVar(root)
+        var.set(Options[4])
+        self.plat_entry = OptionMenu(frame1, (root, var), *Options)
+        self.plat_entry.pack(side=LEFT, padx=19)
+        self.title_entry = Entry(frame2)
+        self.title_entry.pack(side=LEFT, padx=42)
+        self.genre_entry = Entry(frame3)
+        self.genre_entry.pack(side=LEFT, padx=34)
+        self.rating_entry = Entry(frame4)
+        self.rating_entry.pack(side=LEFT, padx=1)
+        
+        self.v1 = IntVar()
+
+        self.yesCheck = Radiobutton(frame5, text = "Yes", bg = "Green", variable = self.v1, value = 1, command = self.processRadiobutton)
+        self.yesCheck.pack(side=LEFT, padx=5, pady=15)
+        self.noCheck = Radiobutton(frame5, text = "No", bg = "Red", variable = self.v1, value = 2, command = self.processRadiobutton)
+        self.noCheck.pack(side=LEFT, padx=5, pady=15)
+
+        self.Searchbtn = Button(frame6, text="Search", command = self._search_btn_clicked)
+        self.Searchbtn.pack(side=LEFT, padx=5)
+          
+        
+    def processRadiobutton(self):
+        print (("Yes" if self.v1.get() == 1 else "No") + " is checked")
+        
+    def _search_btn_clicked(self):
+        close = root.destroy()
+        return close
+
+
+
+root = Tk()
+lf = GameFrame(root)
+root.mainloop()
