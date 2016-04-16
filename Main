@@ -43,6 +43,7 @@ class MainFrame(Frame):
 
     def _search_btn_clicked(self):
         print("Searching")
+        import GameSearch
 
 
     def _addbtn_btn_clicked(self):
@@ -52,7 +53,7 @@ class MainFrame(Frame):
         print("Updating")
 
     def _delete_btn_clicked(self):
-        print("Deleting")
+        import Delete
 
 
 root = Tk()
