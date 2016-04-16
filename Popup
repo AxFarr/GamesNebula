@@ -34,6 +34,21 @@ class Popup(Frame):
     def onSearch(self):
         tm.showinfo("Information", "Search done, no results.")
 
+    def onNullEntryDelete(self):
+        tm.showerror("Error", "Null Entry, no items were deleted")
+
+    def onUserNonExistent(self):
+        tm.showerror("Error", "Username doesn't exist, no items were deleted")
+
+    def onGameNonExistent(self):
+        tm.showerror("Error", "Game doesn't exist, no items were deleted")
+
+    def onMoreThanOneDelete(self):
+        tm.showerror("Error", "Please only choose one item to delete at a time")
+
+    def onPublisherNonExistent(self):
+        tm.showerror("Error", "Please only choose one item to delete at a time")
+
 
 def main():
 
