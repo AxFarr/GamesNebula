@@ -1,0 +1,149 @@
+from tkinter import *
+import tkinter.messagebox as tm
+import sqlite3
+from Popup import *
+import Users
+import re
+
+
+db = sqlite3.connect("game nebula.db")
+c = db.cursor()
+
+
+class DeleteFrame(Frame):
+    def __init__(self, master):
+        Frame.__init__(self, master)
+
+        self.master = master
+        self.logUI()
+
+    def logUI(self):
+
+            self.master.title("Delete")
+            self.pack(fill=BOTH, expand=True)
+
+            frame1 = Frame(self)
+            frame1.pack(fill=X)
+            frame2 = Frame(self)
+            frame2.pack(fill=X)
+            frame3 = Frame(self)
+            frame3.pack(fill=X)
+            frame4 = Frame(self)
+            frame4.pack(fill=X)
+            frame5 = Frame(self)
+            frame5.pack(fill=X)
+            frame6 = Frame(self)
+            frame6.pack(fill=X)
+
+            self.info_label = Label(frame1, text="Please enter the username, game, or publisher to be deleted. \n Only ONE at a time!")
+            self.info_label.pack(side=LEFT, padx=5, pady=14)
+
+            self.username_label = Label(frame2, text="Username to delete")
+            self.username_label.pack(side=LEFT, padx=5, pady=5)
+            self.username_entry = Entry(frame2)
+            self.username_entry.pack(side=LEFT, padx=5, pady=5)
+
+            self.game_label = Label(frame3, text="Game to delete")
+            self.game_label.pack(side=LEFT, padx=5, pady=5)
+            self.game_entry = Entry(frame3)
+            self.game_entry.pack(side=LEFT, padx=27, pady=5)
+
+            self.publisher_label = Label(frame4, text="Publisher to delete")
+            self.publisher_label.pack(side=LEFT, padx=5, pady=5)
+            self.publisher_entry = Entry(frame4)
+            self.publisher_entry.pack(side=LEFT, padx=8, pady=5)
+
+            self.deletebtn = Button(frame5, text="Delete", fg='red', command=self._delete_btn_clicked)
+            self.deletebtn.pack(side=LEFT, padx=25, pady=15)
+
+            self.backbtn = Button(frame5, text="Back", fg='black', command=self._back_btn_clicked)
+            self.backbtn.pack(side=LEFT, pady=15)
+
+
+    def _delete_btn_clicked(self):
+        username = self.username_entry.get()
+        game = self.game_entry.get()
+        publisher = self.publisher_entry.get()
+
+        if len(self.username_entry.get()) == 0 and len(self.game_entry.get()) == 0 \
+           and len(self.publisher_entry.get()) == 0:
+             pu.onNullEntryDelete()
+        elif len(self.username_entry.get()) > 0 and len(self.game_entry.get()) > 0 and len(self.publisher_entry.get()) > 0:
+            pu.onMoreThanOneDelete()
+        elif len(self.username_entry.get()) > 0 and len(self.game_entry.get()) > 0:
+            pu.onMoreThanOneDelete()
+        elif len(self.username_entry.get()) > 0 and len(self.publisher_entry.get()) > 0:
+            pu.onMoreThanOneDelete()
+        elif len(self.game_entry.get()) > 0 and len(self.publisher_entry.get()) > 0:
+            pu.onMoreThanOneDelete()
+        else:
+
+          if len(self.username_entry.get()) > 0:
+            def CheckUserExists(username):
+                c.execute("SELECT name FROM UserData WHERE name=?", (username,))
+                data = c.fetchall()
+                if not data:
+                    return False
+                else:
+                    return True
+
+            def _delete_user():
+                c.execute("DELETE FROM UserData Where name=?", (username,))
+                c.execute("DELETE FROM UserPref Where User=?", (username,))
+
+            if CheckUserExists(username) == True:
+                _delete_user()
+                db.commit()
+            else:
+                pu.onUserNonExistent()
+
+
+          if len(self.game_entry.get()) > 0:
+            def CheckGameExists(game):
+                c.execute("SELECT name FROM games WHERE name=?", (game,))
+                data = c.fetchall()
+                if not data:
+                    return False
+                else:
+                    return True
+
+            def _delete_game():
+                c.execute("DELETE FROM games Where name=?", (game,))
+
+            if CheckGameExists(game) == True:
+                _delete_game()
+                db.commit()
+            else:
+                pu.onGameNonExistent()
+
+          if len(self.publisher_entry.get()) > 0:
+              def CheckPublisherExists(game):
+                  c.execute("SELECT name FROM publishers WHERE name=?", (publisher,))
+                  data = c.fetchall()
+                  if not data:
+                      return False
+                  else:
+                      return True
+
+              def _delete_publisher():
+                  c.execute("DELETE FROM publishers Where name=?", (publisher,))
+
+              if CheckPublisherExists(game) == True:
+                  _delete_publisher()
+                  db.commit()
+              else:
+                  pu.onPublisherNonExistent()
+
+
+    def _back_btn_clicked(self):
+        print("Going back")
+
+
+
+
+
+root = Tk()
+ft = DeleteFrame(master=root)
+pu = Popup(parent=root)
+root.geometry("350x225+300+300")
+root.mainloop()
