@@ -1,0 +1,60 @@
+from tkinter import *
+import tkinter.messagebox as tm
+
+import Users
+import re
+import sqlite3
+
+db = sqlite3.connect('game nebula.db')
+c = db.cursor()
+
+
+class UpdateFrame(Frame):
+    def __init__(self, master):
+        Frame.__init__(self, master)
+
+        self.master = master
+        self.mainUI()
+
+    def mainUI(self):
+
+        self.master.title("Games Nebula")
+        self.pack(fill=BOTH, expand=True)
+
+        frame1 = Frame(self)
+        frame1.pack(fill=X)
+        frame2 = Frame(self)
+        frame2.pack(fill=X)
+        frame3 = Frame(self)
+        frame3.pack(fill=X)
+
+        self.label_1 = Label(frame1, text="Choose an option to update.", fg='green', relief='groove', width='40')
+        self.label_1.pack(side=TOP, padx=5, pady=5)
+
+        self.addbtn = Button(frame2, text="Games", fg='green', command=self._addbtn_btn_clicked)
+        self.addbtn.pack(side=RIGHT, padx=53, pady=10)
+        self.updatebtn = Button(frame2, text="Users", fg='green', command=self._update_btn_clicked)
+        self.updatebtn.pack(side=LEFT, padx=53, pady=10)
+        self.deletebtn = Button(frame3, text="Publishers", fg='green', command=self._delete_btn_clicked)
+        self.deletebtn.pack(side=BOTTOM, padx=25, pady=10)
+
+
+    def _search_btn_clicked(self):
+        print("Searching")
+        import GameSearch
+
+
+    def _addbtn_btn_clicked(self):
+         print("Adding")
+
+    def _update_btn_clicked(self):
+        print("Updating")
+
+    def _delete_btn_clicked(self):
+        import Delete
+
+
+root = Tk()
+root.geometry("300x200+300+300")
+lf = UpdateFrame(root)
+root.mainloop()
