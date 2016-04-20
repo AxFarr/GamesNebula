@@ -1,6 +1,5 @@
 from tkinter import *
 import tkinter.messagebox as tm
-
 import Users
 import re
 import sqlite3
@@ -47,7 +46,7 @@ class MainFrame(Frame):
 
 
     def _addbtn_btn_clicked(self):
-         print("Adding")
+         import Add
 
     def _update_btn_clicked(self):
         print("Updating")
