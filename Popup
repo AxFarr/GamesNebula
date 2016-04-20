@@ -65,6 +65,19 @@ class Popup(Frame):
         tm.showinfo("Information", "Game Successfully deleted!")
 
 
+    def onPublisherLength(self):
+        tm.showwarning("Notice", "Publisher field is either blank or has exceeded the character limit (30 characters).")
+    def onPubisherAdded(self):
+        tm.showInfo("Complete", "Publisher Added.")
+    def onPubisherExists(self):
+        tm.showerror("Error", "Publisher Already Exists.")
+    def onAddressLength(self):
+        tm.showwarning("Notice", "Address field is either blank or has exceeded the character limit (30 characters).")
+    def onPresidentLength(self):
+        tm.showwarning("Notice", "President field is either blank or has exceeded the character limit (30 characters).")
+    def onFoundedError(self):
+        tm.showwarning("Notice", "Year needs 4 digits or contains characters other than integers.")
+
 def main():
 
     root = Tk()
