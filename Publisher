@@ -1,0 +1,95 @@
+from tkinter import *
+import tkinter.messagebox as tm
+import tkinter as tk
+import Users
+import re
+from tkinter import ttk
+from Popup import *
+import sqlite3
+
+db = sqlite3.connect('game nebula.db')
+c = db.cursor()
+
+class PublisherFrame(Frame):
+    def __init__(self, master):
+        Frame.__init__(self, master)
+
+        self.master = master
+        self.mainUI()
+
+    def mainUI(self):
+
+        self.master.title("Games Nebula")
+        self.pack(fill=BOTH, expand=True)
+
+        frame1 = Frame(self)
+        frame1.pack(fill=X)
+        frame2 = Frame(self)
+        frame2.pack(fill=X)
+        frame3 = Frame(self)
+        frame3.pack(fill=X)
+        frame4 = Frame(self)
+        frame4.pack(fill=X)
+
+        self.add_label = Label(frame1, text="Adding Publisher", fg='green', relief='groove', width='80')
+        self.add_label.pack(side=TOP, padx=5, pady=5)
+
+        self.publisher_label = Label(frame2, text="Publisher:")
+        self.publisher_label.pack(side=LEFT, padx=5, pady=5)
+        self.publisherEntry = Entry(frame2, borderwidth=2)
+        self.publisherEntry.pack(side=LEFT)
+
+        self.president_label = Label(frame2, text="President:")
+        self.president_label.pack(side=LEFT, padx=55, pady=5)
+        self.presidentEntry = Entry(frame2, borderwidth=2)
+        self.presidentEntry.pack(side=LEFT, padx=13)
+
+        self.year_label = Label(frame3, text="Year:")
+        self.year_label.pack(side=LEFT, padx=15, pady=5)
+        self.yearEntry = Entry(frame3, borderwidth=2)
+        self.yearEntry.pack(side=LEFT, padx=5)
+
+        self.address_label = Label(frame3, text="Address (City, State, Country):")
+        self.address_label.pack(side=LEFT, padx=5, pady=5)
+        self.addressEntry = Entry(frame3, borderwidth=2)
+        self.addressEntry.pack(side=LEFT, padx=2)
+
+        self.addbtn = Button(frame4, text="Add Publisher", fg='green', command=self._addbtn_btn_clicked)
+        self.addbtn.pack(side=BOTTOM, padx=50, pady=15)
+
+
+    def _addbtn_btn_clicked(self):
+        publisher = self.publisherEntry.get()
+        president = self.presidentEntry.get()
+        year = self.yearEntry.get()
+        address = self.addressEntry.get()
+
+        if len(publisher) > 30 or len(publisher) < 1:
+            pu.onPublisherLength()
+        elif len(address) > 30 or len(address) < 1:
+            pu.onAddressLength()
+        elif len(president) > 30 or len(president) < 1:
+            pu.onPresidentLength()
+        elif not re.match("^[0-9]", year) or len(year) != 4:
+            pu.onFoundedError()
+        else:
+            def CheckRegExists(publisher):
+                c.execute("SELECT name FROM publishers WHERE name=?", (publisher,))
+                data = c.fetchall()
+                if not data:
+                   return False
+                else:
+                    return True
+            if CheckRegExists(publisher) == True:
+                pu.onPubisherExists()
+            else:
+                c.execute('INSERT INTO publishers VALUES (?,?,?,?)', (publisher, address, president, year))
+                db.commit()
+                pu.onPubisherAdded()
+
+
+root = Tk()
+pu = Popup(parent=root)
+root.geometry("550x150+300+300")
+lf = PublisherFrame(root)
+root.mainloop()
