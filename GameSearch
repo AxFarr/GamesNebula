@@ -1,9 +1,15 @@
 from tkinter import *
 import tkinter.messagebox as tm
+from tkinter import ttk
 
 import Users
 import re
 import sqlite3
+from tkinter.ttk import Treeview
+from _overlapped import NULL
+from _collections_abc import Container
+from _operator import contains
+from _sqlite3 import Row
 
 db = sqlite3.connect('game nebula.db')
 c = db.cursor()
@@ -14,13 +20,54 @@ class GameFrame(Frame):
         Frame.__init__(self, master)
 
         self.master = master
+        self.tableUI()
         self.gameUI()
         
+        
+        
+    def tableUI(self):
+        gs = Treeview(self)
+        scrollbar = Scrollbar(self, orient = 'vertical', command = gs.yview)
+        gs.configure(yscroll = scrollbar.set)
+        gs['columns'] = ('name', 'genre', 'ESRB', 'publisher', 'release date', 'singleplayer', 'multiplayer', 'windows', 'ps4', 'xboxone', 'wiiu')
+        gs.heading("#0", text = '', anchor = 'w')
+        gs.heading('name', text = 'Name')
+        gs.column('name', anchor = 'e', width = 60)
+        gs.heading('genre', text = 'Genre')
+        gs.column('genre', anchor = 'e', width = 60)
+        gs.heading('ESRB', text = 'ESRB')
+        gs.column('ESRB', anchor = 'e', width = 60)
+        gs.heading('publisher', text = 'Publisher')
+        gs.column('publisher', anchor = 'e', width = 60)
+        gs.heading('release date', text = 'Release Date')
+        gs.column('release date', anchor = 'e', width = 60)
+        gs.heading('singleplayer', text = 'Single Player')
+        gs.column('singleplayer', anchor = 'e', width = 60)
+        gs.heading('multiplayer', text = 'Multiplayer')
+        gs.column('multiplayer', anchor = 'e', width = 60)
+        gs.heading('windows', text = 'Windows')
+        gs.column('windows', anchor = 'e', width = 60)
+        gs.heading('ps4', text = 'PS4')
+        gs.column('ps4', anchor = 'e', width = 60)
+        gs.heading('xboxone', text = 'XBoxOne')
+        gs.column('xboxone', anchor = 'e', width = 60)
+        gs.heading('wiiu', text = 'WiiU')
+        gs.column('wiiu', anchor = 'e', width = 60)
+        
+        scrollbar.pack(side = RIGHT, fill = Y)
+        gs.pack(side = RIGHT)
+        self.treeview = gs
+        self.grid_rowconfigure(0, weight = 1)
+        self.grid_columnconfigure(0, weight = 1)
+        
+        
+        
+        
+        
     def gameUI(self):
-        Options = ["PS4", "XBoxOne", "WiiU", "PC", "Any"]
 
         self.master.title("Game Search")
-        root.geometry('800x300')
+        root.geometry('1200x400')
         root.resizable(width=FALSE, height=FALSE)
         self.pack(fill = BOTH, expand = True)
         
@@ -36,11 +83,13 @@ class GameFrame(Frame):
         frame5.pack(fill=X)
         frame6 = Frame(self)
         frame6.pack(fill=X)
+        frame7 = Frame(self)
+        frame7.pack(fill=X)
         
-        self.plat_label = Label(frame1, text="Platform")
-        self.plat_label.pack(side=LEFT, padx=5, pady=5)
-        self.Title_label = Label(frame2, text="Title")
+        self.Title_label = Label(frame1, text="Title")
         self.Title_label.pack(side=LEFT, padx=5, pady=20)
+        self.plat_label = Label(frame2, text="Platform")
+        self.plat_label.pack(side=LEFT, padx=5, pady=5)
         self.genre_label = Label(frame3, text="Genre")
         self.genre_label.pack(side=LEFT, padx=5, pady=20)
         self.rating_label = Label(frame4, text="Rating Level")
@@ -48,34 +97,114 @@ class GameFrame(Frame):
         self.multi_label = Label(frame5, text="Multiplayer")
         self.multi_label.pack(side=LEFT, padx=5, pady=20)
         
-        var = StringVar(root)
-        var.set(Options[4])
-        self.plat_entry = OptionMenu(frame1, (root, var), *Options)
-        self.plat_entry.pack(side=LEFT, padx=19)
-        self.title_entry = Entry(frame2)
+        self.title_entry = Entry(frame1)
         self.title_entry.pack(side=LEFT, padx=42)
-        self.genre_entry = Entry(frame3)
+        self.plat_value = StringVar(root)
+        self.plat_entry = ttk.Combobox(frame2, textvariable = self.plat_value)
+        self.plat_entry['values'] = ('Any', 'PS4', 'XBoxOne', 'WiiU', 'PC')
+        self.plat_entry.current(0)
+        self.plat_entry.pack(side=LEFT, padx=19)
+        self.genre_value = StringVar(root)
+        self.genre_entry = ttk.Combobox(frame3, textvariable = self.genre_value)
+        self.genre_entry['values'] = ( 'Any', 'shooter', 'Role-playing', 'Party Game', 'Action-adventure', 'Simulation', 'Strategy', 'Tactics', 'Platformer', 'Survival', 'Racing', 'Multiplayer', 'Fighting', 'Card game', 'Stealth')
+        self.genre_entry.current(0)
         self.genre_entry.pack(side=LEFT, padx=34)
-        self.rating_entry = Entry(frame4)
+        self.rating_value = StringVar(root)
+        self.rating_entry = ttk.Combobox(frame4, textvariable = self.rating_value)
+        self.rating_entry['values'] = ('Any', 'Everyone', 'Teen', 'Mature')
+        self.rating_entry.current(0)
         self.rating_entry.pack(side=LEFT, padx=1)
+        self.multi_value = StringVar(root)
+        self.multi_entry = ttk.Combobox(frame5, textvariable = self.multi_value)
+        self.multi_entry['values'] = ('Any', 'TRUE', 'FALSE')
+        self.multi_entry.current(0)
+        self.multi_entry.pack(side = LEFT, padx=1)
         
-        self.v1 = IntVar()
-
-        self.yesCheck = Radiobutton(frame5, text = "Yes", bg = "Green", variable = self.v1, value = 1, command = self.processRadiobutton)
-        self.yesCheck.pack(side=LEFT, padx=5, pady=15)
-        self.noCheck = Radiobutton(frame5, text = "No", bg = "Red", variable = self.v1, value = 2, command = self.processRadiobutton)
-        self.noCheck.pack(side=LEFT, padx=5, pady=15)
 
         self.Searchbtn = Button(frame6, text="Search", command = self._search_btn_clicked)
         self.Searchbtn.pack(side=LEFT, padx=5)
           
         
-    def processRadiobutton(self):
-        print (("Yes" if self.v1.get() == 1 else "No") + " is checked")
+    #def processRadiobutton(self):
+        #print (("Yes" if self.v1.get() == 1 else "No") + " is checked")
+        
         
     def _search_btn_clicked(self):
-        close = root.destroy()
-        return close
+        self.treeview.delete(*self.treeview.get_children())
+        
+        if self.title_entry.get() is not None:
+            c.execute("SELECT * FROM games WHERE name = ?", [self.title_entry.get()])
+            result = c.fetchall()
+            for item in result:
+                self.treeview.insert('', 0, values = item)
+                
+        if self.title_entry.get() == "":
+            c.execute("SELECT DISTINCT * FROM games")
+            result = c.fetchall()
+            for item in result:
+                self.treeview.insert('', 0, values = item)
+            
+                
+        if self.plat_entry.get() is not None or self.plat_entry.get().find(self.plat_entry):
+            if self.plat_entry.get() == 'PS4':
+                c.execute("SELECT * FROM games WHERE PS4 = 'TRUE'")
+                for row in c:
+                    self.treeview.insert('', 0, values = row)
+            
+            if self.plat_entry.get() == 'XBoxOne':
+                c.execute("SELECT * FROM games WHERE XBONE = 'TRUE'")
+                for row in c:
+                    self.treeview.insert('', 0, values = row)
+                    
+            if self.plat_entry.get() == 'WiiU':
+                c.execute("SELECT * FROM games WHERE WiiU = 'TRUE'")
+                for row in c:
+                    self.treeview.insert('', 0, values = row)
+                    
+            if self.plat_entry.get() == 'PC':
+                c.execute("SELECT * FROM games WHERE windows = 'TRUE'")
+                for row in c:
+                    self.treeview.insert('', 0, values = row)
+                    
+            if self.plat_entry.get() == 'Any':
+                result = self.title_entry.get()
+                for item in result:
+                    self.treeview.insert('', 0, values = item)
+            
+        if self.genre_entry.get() is not None or self.genre_entry.get().find(self.genre_entry) != -1:
+            c.execute("SELECT * FROM games WHERE genre = ?",  [self.genre_entry.get()])
+            result = c.fetchall()
+            for item in result:
+                self.treeview.insert('', 0, values = item)
+                
+        if self.genre_entry.get() == 'Any':
+            result = self.title_entry.get()
+            for item in result:
+                self.treeview.insert('', 0, values = item)
+        
+        if self.rating_entry.get() is not None or self.rating_entry.get().find(self.rating_entry) != -1:
+            c.execute("SELECT * FROM games WHERE ESRB = ?", [self.rating_entry.get()])
+            result = c.fetchall()
+            for item in result:
+                self.treeview.insert('', 0, values = item)
+                
+        if self.rating_entry.get() == 'Any':
+            result = self.title_entry.get()
+            for item in result:
+                self.treeview.insert('', 0, values = item)
+                
+        if self.multi_entry.get() is not None or self.multi_entry.get().find(self.multi_entry) != -1:
+            if self.multi_entry.get() == 'TRUE':
+                c.execute("SELECT * FROM games WHERE multiplayer = ? AND multiplayer = 'TRUE'", [self.multi_entry.get()])
+                for row in c:
+                    self.treeview.insert('', 0, values = row)
+            else:
+                c.execute("SELECT * FROM games WHERE multiplayer = ? AND multiplayer = 'FALSE'", [self.multi_entry.get()])
+                for row in c:
+                    self.treeview.insert('', 0, values = row)
+        
+        #close = root.destroy()
+        #return close
 
 
 
