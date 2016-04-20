@@ -5,17 +5,17 @@ import Users
 import re
 from tkinter import ttk
 import sqlite3
+from Popup import *
 
 db = sqlite3.connect('game nebula.db')
 c = db.cursor()
 
-genres= ['Any', 'Action Role-Playing', 'Action-Adventure', 'Collectible Card Game', 'Fighting', 'First-Person Shooter', 'Hack and Slash', 'Level Editor', 'Multiplayer Online Battle Arena', \
+genres= ['Action Role-Playing', 'Action-Adventure', 'Collectible Card Game', 'Fighting', 'First-Person Shooter', 'Hack and Slash', 'Level Editor', 'Multiplayer Online Battle Arena', \
          'Party Game', 'Platformer', 'Racing', 'Real-Time Strategy', 'Rhythm Game', 'Role-Playing', 'Sandbox', 'Survival Horror', 'Third-Person Shooter', 'Turn-Based Tactics']
-publishers= ['Any', 'Warner Brothers', 'Valve Corporation', 'Ubisoft', 'Square Enix', 'Squad', 'Sony Computer Entertainment', 'Sega', 'SUPERHOT Team', 'Nintendo', 'Microsoft Studios', \
+publishers= ['Other', 'Warner Brothers', 'Valve Corporation', 'Ubisoft', 'Square Enix', 'Squad', 'Sony Computer Entertainment', 'Sega', 'SUPERHOT Team', 'Nintendo', 'Microsoft Studios', \
              'Konami', 'Harmonix', 'Frictional Games', 'Electronic Arts', 'Digital Extremes', 'Deep Silver', 'Capcom', 'Blizzard Entertainment', 'Bethesda Softworks', \
              'Bandai Namco Entertainment', 'Activision', '343 Industries', '2K Games']
 publishers.reverse()
-
 
 
 class MainFrame(Frame):
@@ -38,6 +38,10 @@ class MainFrame(Frame):
         frame3.pack(fill=X)
         frame4 = Frame(self)
         frame4.pack(fill=X)
+        frame5 = Frame(self)
+        frame5.pack(fill=X)
+        frame6 = Frame(self)
+        frame6.pack(fill=X)
 
         self.add_label = Label(frame1, text="Add a Game", fg='green', relief='groove', width='80')
         self.add_label.pack(side=TOP, padx=5, pady=5)
@@ -55,26 +59,26 @@ class MainFrame(Frame):
         self.genreBox.current(0)
         self.genreBox.pack(side=LEFT, padx=5)
 
-        self.game_label = Label(frame2, text="Rating")
-        self.game_label.pack(side=LEFT, padx=1, pady=5)
+        self.rating_label = Label(frame2, text="Rating")
+        self.rating_label.pack(side=LEFT, padx=1, pady=5)
         self.ratingBoxvalue = StringVar(root)
         self.ratingBox = ttk.Combobox(frame2, textvariable=self.ratingBoxvalue)
-        self.ratingBox['values']= ('Everyone', 'Teen', 'Mature', 'Any')
-        self.ratingBox.current(3)
+        self.ratingBox['values']= ('Everyone', 'Teen', 'Mature')
+        self.ratingBox.current(2)
         self.ratingBox.pack(side=LEFT, padx=5)
 
-        self.game_label = Label(frame3, text="Publisher")
-        self.game_label.pack(side=LEFT, padx=5, pady=5)
+        self.publisher_label = Label(frame3, text="Publisher")
+        self.publisher_label.pack(side=LEFT, padx=5, pady=5)
         self.publisherBoxvalue = StringVar(root)
         self.publisherBox = ttk.Combobox(frame3, textvariable=self.publisherBoxvalue)
         self.publisherBox['values'] = (publishers)
-        self.publisherBox.current(23)
+        self.publisherBox.current(0)
         self.publisherBox.pack(side=LEFT, padx=5)
 
-        self.game_label = Label(frame3, text="Release Date (mm/dd/yyyy)")
-        self.game_label.pack(side=LEFT, padx=20, pady=5)
-        self.game_entry = Entry(frame3, borderwidth=2)
-        self.game_entry.pack(side=LEFT)
+        self.release_label = Label(frame3, text="Release Date (mm/dd/yyyy)")
+        self.release_label.pack(side=LEFT, padx=20, pady=5)
+        self.release_entry = Entry(frame3, borderwidth=2)
+        self.release_entry.pack(side=LEFT)
 
         self.mode_label = Label(frame4, text="Game Modes", relief = 'groove')
         self.mode_label.pack(side=LEFT, padx=5, pady=5)
@@ -85,28 +89,65 @@ class MainFrame(Frame):
         self.MultiCheck = Checkbutton(frame4, text='Multi-Player', variable=self.v2)
         self.MultiCheck.pack(side=LEFT, padx=5, pady=5)
 
-        self.addbtn = Button(frame4, text="Add game", fg='green', command=self._addbtn_btn_clicked)
-        self.addbtn.pack(side=LEFT, padx=53, pady=10)
+        self.mode_label = Label(frame5, text="Consoles", relief='groove')
+        self.mode_label.pack(side=LEFT, padx=5, pady=5)
+        self.v3 = IntVar()
+        self.v4 = IntVar()
+        self.v5 = IntVar()
+        self.v6 = IntVar()
+        self.windowsCheck = Checkbutton(frame5, text='Windows', variable=self.v3)
+        self.windowsCheck.pack(side=LEFT, padx=5, pady=5)
+        self.PS4Check = Checkbutton(frame5, text='PS4', variable=self.v4)
+        self.PS4Check.pack(side=LEFT, padx=5, pady=5)
+        self.XboxOneCheck = Checkbutton(frame5, text='Xbox One', variable=self.v5)
+        self.XboxOneCheck.pack(side=LEFT, padx=5, pady=5)
+        self.WiiCheck = Checkbutton(frame5, text='WiiU', variable=self.v6)
+        self.WiiCheck.pack(side=LEFT, padx=5, pady=5)
 
-
-
-
-    def _search_btn_clicked(self):
-        print(genres)
-        import GameSearch
+        self.addbtn = Button(frame6, text="Add game", fg='green', command=self._addbtn_btn_clicked)
+        self.addbtn.pack(side=BOTTOM, padx=53, pady=10)
 
 
     def _addbtn_btn_clicked(self):
-         print(genres[1])
+        gameName = self.game_entry.get()
+        genre = self.genreBox.get()
+        rating = self.ratingBox.get()
+        publisher = self.publisherBox.get()
+        release = self.release_entry.get()
 
-    def _update_btn_clicked(self):
-        print("Updating")
+        SinglePlayer = 'FALSE'
+        MultiPlayer = 'FALSE'
+        Windows = 'FALSE'
+        PS4 = 'FALSE'
+        XboxOne = 'FALSE'
+        WiiU = 'FALSE'
 
-    def _delete_btn_clicked(self):
-        import Delete
+        if self.v1.get() == 1:
+            SinglePlayer = 'TRUE'
+        if self.v2.get() == 1:
+            MultiPlayer = 'TRUE'
+        if self.v3.get() == 1:
+            Windows = 'TRUE'
+        if self.v4.get() == 1:
+            PS4 = 'TRUE'
+        if self.v5.get() == 1:
+            XboxOne = 'TRUE'
+        if self.v6.get() == 1:
+            WiiU = 'TRUE'
+
+        if len(gameName) == 0 or len(release) == 0:
+            pu.onNull()
+        else:
+            c.execute('INSERT INTO games VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', (gameName, genre, rating, publisher, release, SinglePlayer, MultiPlayer, \
+                                                                                     Windows, PS4, XboxOne, WiiU))
+            pu.onGameAdded()
+            db.commit()
+
+
 
 
 root = Tk()
-root.geometry("550x500+300+300")
+pu = Popup(parent=root)
+root.geometry("550x225+300+300")
 lf = MainFrame(root)
 root.mainloop()
