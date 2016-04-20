@@ -112,12 +112,13 @@ class DeleteFrame(Frame):
 
             if CheckGameExists(game) == True:
                 _delete_game()
+                pu.onGameDeleted()
                 db.commit()
             else:
                 pu.onGameNonExistent()
 
           if len(self.publisher_entry.get()) > 0:
-              def CheckPublisherExists(game):
+              def CheckPublisherExists(publisher):
                   c.execute("SELECT name FROM publishers WHERE name=?", (publisher,))
                   data = c.fetchall()
                   if not data:
