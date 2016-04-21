@@ -67,8 +67,8 @@ class Popup(Frame):
 
     def onPublisherLength(self):
         tm.showwarning("Notice", "Publisher field is either blank or has exceeded the character limit (30 characters).")
-    def onPubisherAdded(self):
-        tm.showInfo("Complete", "Publisher Added.")
+    def onPublisherAdded(self):
+        tm.showinfo("Complete", "Publisher Added.")
     def onPubisherExists(self):
         tm.showerror("Error", "Publisher Already Exists.")
     def onAddressLength(self):
