@@ -84,8 +84,9 @@ class PublisherFrame(Frame):
                 pu.onPubisherExists()
             else:
                 c.execute('INSERT INTO publishers VALUES (?,?,?,?)', (publisher, address, president, year))
+                c.execute('UPDATE games SET publisher = (?) WHERE publisher="Other"', (publisher))
                 db.commit()
-                pu.onPubisherAdded()
+                pu.onPublisherAdded()
 
 
 root = Tk()
