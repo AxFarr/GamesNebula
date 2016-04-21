@@ -6,10 +6,6 @@ import Users
 import re
 import sqlite3
 from tkinter.ttk import Treeview
-from _overlapped import NULL
-from _collections_abc import Container
-from _operator import contains
-from _sqlite3 import Row
 
 db = sqlite3.connect('game nebula.db')
 c = db.cursor()
@@ -106,7 +102,8 @@ class GameFrame(Frame):
         self.plat_entry.pack(side=LEFT, padx=19)
         self.genre_value = StringVar(root)
         self.genre_entry = ttk.Combobox(frame3, textvariable = self.genre_value)
-        self.genre_entry['values'] = ( 'Any', 'shooter', 'Role-playing', 'Party Game', 'Action-adventure', 'Simulation', 'Strategy', 'Tactics', 'Platformer', 'Survival', 'Racing', 'Multiplayer', 'Fighting', 'Card game', 'Stealth')
+        self.genre_entry['values'] = ('Any', 'Action Role playing', 'Action-Adventure', 'Collectible Card Game', 'Fighting', 'First person shooter', 'Hack and Slash', 'Level Editor', 'Multiplayer Online Battle Arena', 
+         'Party Game', 'Platformer', 'Racing', 'Real Time Strategy', 'Rhythm Game', 'Role playing', 'Sandbox', 'Survival Horror', 'Third person shooter', 'Turn-Based Tactics')
         self.genre_entry.current(0)
         self.genre_entry.pack(side=LEFT, padx=34)
         self.rating_value = StringVar(root)
@@ -131,57 +128,50 @@ class GameFrame(Frame):
         
     def _search_btn_clicked(self):
         self.treeview.delete(*self.treeview.get_children())
+        L = []
         
         if self.title_entry.get() is not None:
-            c.execute("SELECT DISTINCT * FROM games WHERE name = ?", [self.title_entry.get()])
-            result = c.fetchall()
-            for item in result:
-                    self.treeview.insert('', 0, values = item)
-            
-                
-        if self.title_entry.get() == "":
-            c.execute("SELECT DISTINCT * FROM games")
-            result = c.fetchall()
-            for item in result:
-                self.treeview.insert('', 0, values = item)
-            
-                
-        if self.plat_entry.get() is not None or self.plat_entry.get().find(self.plat_entry):
+            itr = c.execute("SELECT DISTINCT * FROM games WHERE name = ?", [self.title_entry.get()]).fetchall()
+            for x in itr:
+                if x not in L:
+                    L.append(x)
+                    
             if self.plat_entry.get() == 'PS4':
-                c.execute("SELECT DISTINCT * FROM games WHERE PS4 = 'TRUE'")
-            
+                itr = c.execute("SELECT DISTINCT * FROM games WHERE PS4 = 'TRUE' AND name = ?", [self.title_entry.get()]).fetchall()
+                for x in itr:
+                    if x not in L:
+                        L.append(x)
+                
             if self.plat_entry.get() == 'XBoxOne':
-                c.execute("SELECT DISTINCT * FROM games WHERE XBONE = 'TRUE'")
-                    
+                itr = c.execute("SELECT DISTINCT * FROM games WHERE XBone = 'TRUE' AND name = ?", [self.title_entry.get()]).fetchall()
+                for x in itr:
+                    if x not in L:
+                        L.append(x)
+                
             if self.plat_entry.get() == 'WiiU':
-                c.execute("SELECT DISTINCT * FROM games WHERE WiiU = 'TRUE'")
-                    
-            if self.plat_entry.get() == 'PC':
-                c.execute("SELECT DISTINCT * FROM games WHERE windows = 'TRUE'")
-                    
+                itr = c.execute("SELECT DISTINCT * FROM games WHERE WIIU = 'TRUE' AND name = ?", [self.title_entry.get()]).fetchall()
+                for x in itr:
+                    if x not in L:
+                        L.append(x)
+                
+            if self.genre_entry.get() is not 'Any':
+                itr = c.execute("SELECT DISTINCT * FROM games WHERE genre = ? AND name = ?", [self.genre_entry.get(), self.title_entry.get()]).fetchall()
+                for x in itr:
+                    if x not in L:
+                        L.append(x)
+                
             if self.plat_entry.get() == 'Any':
                 pass
             
-        if self.genre_entry.get() is not None or self.genre_entry.get().find(self.genre_entry) != -1:
-            c.execute("SELECT DISTINCT * FROM games WHERE genre = ?",  [self.genre_entry.get()])
-            result = c.fetchall()
-            for item in result:
-                    self.treeview.insert('', 0, values = item)
-
-                
-        if self.genre_entry.get() == 'Any':
-            pass
+            if self.genre_entry.get() == 'Any':
+                pass
+               
+             
         
-        if self.rating_entry.get() is not None or self.rating_entry.get().find(self.rating_entry) != -1:
-            c.execute("SELECT DISTINCT * FROM games WHERE genre = ? AND ESRB = ?", [self.genre_entry.get(), self.rating_entry.get()])
-            result = c.fetchall()
-            for item in result:
-                    self.treeview.insert('', 0, values = item)
+            for x in L:
+                self.treeview.insert('', 0, values = x)
                 
-        if self.rating_entry.get() == 'Any':
-            pass
-                
-        if self.multi_entry.get() is not None or self.multi_entry.get().find(self.multi_entry) != -1:
+            ''' if self.multi_entry.get() is not None or self.multi_entry.get().find(self.multi_entry) != -1:
             if self.multi_entry.get() == 'TRUE':
                 c.execute("SELECT * FROM games WHERE multiplayer = ? AND multiplayer = 'TRUE'", [self.multi_entry.get()])
                 for row in c:
@@ -191,9 +181,15 @@ class GameFrame(Frame):
                 for row in c:
                     self.treeview.insert('', 0, values = row)
                     
+            result = c.fetchall()
+            for item in result:
+                self.treeview.insert('', 0, values = item)'''
         
-        #close = root.destroy()
-        #return close
+        if self.title_entry.get() == "":
+            c.execute("SELECT DISTINCT * FROM games")
+            result = c.fetchall()
+            for item in result:
+                self.treeview.insert('', 0, values = item)
 
 
 
