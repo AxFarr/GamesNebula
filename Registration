@@ -140,6 +140,9 @@ class RegistrationFrame(Frame):
 
 
 root = Tk()
+def on_closing():
+    root.withdraw()
+root.protocol("WM_DELETE_WINDOW", on_closing)
 pu = Popup(parent=root)
 ft = RegistrationFrame(master=root)
 root.mainloop()
