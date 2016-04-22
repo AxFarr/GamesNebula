@@ -152,12 +152,16 @@ class MainFrame(Frame):
         elif publisher == 'Other':
             pu.onOtherPub()
             import Publisher
+            Publisher.root.deiconify()
 
 
 
 
 
 root = Tk()
+def on_closing():
+    root.withdraw()
+root.protocol("WM_DELETE_WINDOW", on_closing)
 pu = Popup(parent=root)
 root.geometry("550x275+300+300")
 lf = MainFrame(root)
