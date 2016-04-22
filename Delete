@@ -144,6 +144,9 @@ class DeleteFrame(Frame):
 
 
 root = Tk()
+def on_closing():
+    root.withdraw()
+root.protocol("WM_DELETE_WINDOW", on_closing)
 ft = DeleteFrame(master=root)
 pu = Popup(parent=root)
 root.geometry("350x225+300+300")
