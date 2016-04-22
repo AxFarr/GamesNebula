@@ -43,19 +43,25 @@ class MainFrame(Frame):
     def _search_btn_clicked(self):
         print("Searching")
         import GameSearch
+        GameSearch.root.deiconify()
 
 
     def _addbtn_btn_clicked(self):
-         import Add
+        import Add
+        Add.root.deiconify()
 
     def _update_btn_clicked(self):
         print("Updating")
 
     def _delete_btn_clicked(self):
         import Delete
+        Delete.root.deiconify()
 
 
 root = Tk()
+def on_closing():
+    root.withdraw()
+root.protocol("WM_DELETE_WINDOW", on_closing)
 root.geometry("300x200+300+300")
 lf = MainFrame(root)
 root.mainloop()
