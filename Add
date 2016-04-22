@@ -73,39 +73,34 @@ class MainFrame(Frame):
         self.publisherBox = ttk.Combobox(frame3, textvariable=self.publisherBoxvalue)
         self.publisherBox['values'] = (publishers)
         self.publisherBox.current(0)
-        self.publisherBox.pack(side=LEFT, padx=5)
+        self.publisherBox.pack(side=LEFT, padx=5, pady=20)
 
         self.release_label = Label(frame3, text="Release Date (mm/dd/yyyy)")
         self.release_label.pack(side=LEFT, padx=20, pady=5)
         self.release_entry = Entry(frame3, borderwidth=2)
         self.release_entry.pack(side=LEFT)
 
-        self.mode_label = Label(frame4, text="Game Modes", relief = 'groove')
+        self.mode_label = Label(frame4, text="Multi-Player?", relief = 'groove')
         self.mode_label.pack(side=LEFT, padx=5, pady=5)
-        self.v1 = IntVar()
-        self.v2 = IntVar()
-        self.SingleCheck = Checkbutton(frame4, text='Single-Player', variable=self.v1)
-        self.SingleCheck.pack(side=LEFT, padx=5, pady=5)
-        self.MultiCheck = Checkbutton(frame4, text='Multi-Player', variable=self.v2)
-        self.MultiCheck.pack(side=LEFT, padx=5, pady=5)
+        self.mpSpinBox = Spinbox(frame4, values=('Yes', 'No'), width=8)
+        self.mpSpinBox.pack(side=LEFT, pady=10)
 
-        self.mode_label = Label(frame5, text="Consoles", relief='groove')
+        self.mode_label = Label(frame4, text="Single Player?", relief='groove')
         self.mode_label.pack(side=LEFT, padx=5, pady=5)
-        self.v3 = IntVar()
-        self.v4 = IntVar()
-        self.v5 = IntVar()
-        self.v6 = IntVar()
-        self.windowsCheck = Checkbutton(frame5, text='Windows', variable=self.v3)
-        self.windowsCheck.pack(side=LEFT, padx=5, pady=5)
-        self.PS4Check = Checkbutton(frame5, text='PS4', variable=self.v4)
-        self.PS4Check.pack(side=LEFT, padx=5, pady=5)
-        self.XboxOneCheck = Checkbutton(frame5, text='Xbox One', variable=self.v5)
-        self.XboxOneCheck.pack(side=LEFT, padx=5, pady=5)
-        self.WiiCheck = Checkbutton(frame5, text='WiiU', variable=self.v6)
-        self.WiiCheck.pack(side=LEFT, padx=5, pady=5)
+        self.spSpinBox = Spinbox(frame4, values = ('Yes', 'No'), width=8)
+        self.spSpinBox.pack(side=LEFT, pady=10)
 
-        self.addbtn = Button(frame6, text="Add game", fg='green', command=self._addbtn_btn_clicked)
-        self.addbtn.pack(side=BOTTOM, padx=53, pady=10)
+        self.mode_label = Label(frame4, text="Select all platforms \n this game is available for:")
+        self.mode_label.pack(side=LEFT, padx=5, pady=5)
+        self.listbox = Listbox(frame4, selectmode='multiple', activestyle='dotbox', height=4, borderwidth=2, highlightcolor='green')
+        self.listbox.pack(side=LEFT, pady=5, padx=10)
+        for item in ["Windows", "PS4", "Xbox One", "WiiU"]:
+            self.listbox.insert(END, item)
+
+        self.addbtn = Button(frame6, text="Add game", command=self._addbtn_btn_clicked, fg='green', activebackground= 'green')
+        self.addbtn.pack(side=BOTTOM, padx=20, pady=20)
+
+
 
 
     def _addbtn_btn_clicked(self):
@@ -115,39 +110,55 @@ class MainFrame(Frame):
         publisher = self.publisherBox.get()
         release = self.release_entry.get()
 
-        SinglePlayer = 'FALSE'
-        MultiPlayer = 'FALSE'
+        SinglePlayer = self.spSpinBox.get()
+        MultiPlayer = self.mpSpinBox.get()
         Windows = 'FALSE'
         PS4 = 'FALSE'
         XboxOne = 'FALSE'
         WiiU = 'FALSE'
 
-        if self.v1.get() == 1:
+        if SinglePlayer == 'Yes':
             SinglePlayer = 'TRUE'
-        if self.v2.get() == 1:
+        else:
+            SinglePlayer = 'FALSE'
+        if MultiPlayer == 'Yes':
             MultiPlayer = 'TRUE'
-        if self.v3.get() == 1:
+        else:
+            MultiPlayer = 'FALSE'
+
+
+        if 0 in self.listbox.curselection():
             Windows = 'TRUE'
-        if self.v4.get() == 1:
+        if 1 in self.listbox.curselection():
             PS4 = 'TRUE'
-        if self.v5.get() == 1:
+        if 2 in self.listbox.curselection():
             XboxOne = 'TRUE'
-        if self.v6.get() == 1:
+        if 3 in self.listbox.curselection():
             WiiU = 'TRUE'
+
+
+        print(SinglePlayer)
+
 
         if len(gameName) == 0 or len(release) == 0:
             pu.onNull()
         else:
             c.execute('INSERT INTO games VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', (gameName, genre, rating, publisher, release, SinglePlayer, MultiPlayer, \
                                                                                      Windows, PS4, XboxOne, WiiU))
-            pu.onGameAdded()
             db.commit()
+
+        if publisher != 'Other':
+            pu.onGameAdded()
+        elif publisher == 'Other':
+            pu.onOtherPub()
+            import Publisher
+
 
 
 
 
 root = Tk()
 pu = Popup(parent=root)
-root.geometry("550x225+300+300")
+root.geometry("550x275+300+300")
 lf = MainFrame(root)
 root.mainloop()
