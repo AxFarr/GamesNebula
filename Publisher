@@ -90,6 +90,9 @@ class PublisherFrame(Frame):
 
 
 root = Tk()
+def on_closing():
+    root.withdraw()
+root.protocol("WM_DELETE_WINDOW", on_closing)
 pu = Popup(parent=root)
 root.geometry("550x150+300+300")
 lf = PublisherFrame(root)
