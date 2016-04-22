@@ -71,17 +71,18 @@ class LoginFrame(Frame):
             if CheckUserExists(username, password) is True:
                 print("Login Complete. Welcome " + username + "!")
                 import Main
+                Main.root.deiconify()
             else:
                 print("Username or password is incorrect")
 
     def _register_btn_clicked(self):
         import Registration
-
-
-
-
+        Registration.root.deiconify()
 
 
 root = Tk()
+def on_closing():
+    sys.exit()
+root.protocol("WM_DELETE_WINDOW", on_closing)
 ft = LoginFrame(master=root)
 root.mainloop()
