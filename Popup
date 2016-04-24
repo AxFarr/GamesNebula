@@ -136,6 +136,9 @@ class Popup(Frame):
     def onUpdateOwner(self):
         tm.showerror("Error", "You can't update the owner's information!")
 
+    def onOwnerLogged(self):
+        tm.showinfo("Success", "Successfully logged in, Welcome Owner!")
+
 
 
 def main():
@@ -143,7 +146,6 @@ def main():
     root = Tk()
     pu = Popup(root)
     root.mainloop()
-
 
 if __name__ == '__main__':
     main()
