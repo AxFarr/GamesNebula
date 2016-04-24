@@ -23,7 +23,8 @@ class GameFrame(Frame):
         scrollbar = Scrollbar(self, orient = 'vertical', command = gs.yview)
         gs.configure(yscroll = scrollbar.set)
         gs['columns'] = ('name', 'genre', 'ESRB', 'publisher', 'release date', 'singleplayer', 'multiplayer', 'windows', 'ps4', 'xboxone', 'wiiu')
-        gs.heading("#0", text = '', anchor = 'w')
+        gs.heading("#0", text = '', anchor = 'n')
+        gs.column("#0", width = 0)
         gs.heading('name', text = 'Name')
         gs.column('name', anchor = 'e', width = 60)
         gs.heading('genre', text = 'Genre')
@@ -48,7 +49,7 @@ class GameFrame(Frame):
         gs.column('wiiu', anchor = 'e', width = 60)
         
         scrollbar.pack(side = RIGHT, fill = Y)
-        gs.pack(side = RIGHT)
+        gs.pack(side = RIGHT, padx = 120)
         self.treeview = gs
         self.grid_rowconfigure(0, weight = 1)
         self.grid_columnconfigure(0, weight = 1)
@@ -94,7 +95,7 @@ class GameFrame(Frame):
         self.title_entry.pack(side=LEFT, padx=42)
         self.plat_value = StringVar(root)
         self.plat_entry = ttk.Combobox(frame2, textvariable = self.plat_value)
-        self.plat_entry['values'] = ('Any', 'PS4', 'XBoxOne', 'WiiU', 'PC')
+        self.plat_entry['values'] = ('Any', 'PS4', 'XBoxOne', 'WiiU', 'Windows')
         self.plat_entry.current(0)
         self.plat_entry.pack(side=LEFT, padx=19)
         self.genre_value = StringVar(root)
@@ -125,7 +126,7 @@ class GameFrame(Frame):
         platform = self.plat_entry.get()
         genre = self.genre_entry.get()
         rating = self.rating_entry.get()
-        multip = self.multi_entry.get()
+        multiplayer = self.multi_entry.get()
         
         ps4 = 'False'
         xbox = 'False'
@@ -144,10 +145,10 @@ class GameFrame(Frame):
                 xbox = 'True'
             elif platform == 'WiiU':
                 wii = 'True'
-            elif platform == 'PC':
+            elif platform == 'Windows':
                 pc = 'True'
             else:
-                itr = c.execute("SELECT DISTINCT * FROM games WHERE name = ?", [self.title_entry.get()]).fetchall()
+                itr = c.execute("SELECT DISTINCT * FROM games WHERE name = ?", [gameName]).fetchall()
                 for x in itr:
                     if x not in L:
                         L.append(x)
@@ -164,38 +165,73 @@ class GameFrame(Frame):
                 xbox = 'True'
             elif platform == 'WiiU':
                 wii = 'True'
-            elif platform == 'PC':
+            elif platform == 'Windows':
                 pc = 'True'
-            if genre is not 'Any':
+            elif genre is not 'Any':
                 egenre = 'True'
-            if rating is not 'Any':
+            elif rating == 'Everyone' or rating == 'Teen' or rating == 'Mature':
                 erating = 'True'
-            if multip is not 'Any':
+            elif multiplayer is not 'Any':
                 multi = 'True'
                
-            if platform == 'Any' and genre == 'Any' and rating == 'Any' and multip == 'Any':
+            if platform == 'Any' and genre == 'Any' and rating == 'Any' and multiplayer == 'Any':
                 itr = c.execute("SELECT DISTINCT * FROM games").fetchall()
                 for x in itr:
                     if x not in L:
                         L.append(x)
                         
+######################################################################################################################################
+######################################################################################################################################  
             if ps4 == 'True':
                 if platform == 'PS4' and genre == 'Action-Adventure':
                     if platform == 'PS4' and genre == 'Action-Adventure' and rating == 'Everyone':
-                        itr = c.execute("SELECT * from games WHERE genre = 'Action-Adventure' AND PS4 = 'TRUE' AND ESRB = 'Everyone'").fetchall()
-                        for x in itr:
-                            if x not in L:
-                                L.append(x)
+                        if platform == 'PS4' and genre == 'Action Adventure' and rating == 'Everyone' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Action-Adventure' AND PS4 = 'TRUE' AND ESRB = 'Everyone' AND multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)  
+                        elif platform == 'PS4' and genre == 'Action Adventure' and rating == 'Everyone' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Action-Adventure' AND PS4 = 'TRUE' AND ESRB = 'Everyone' AND multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Action-Adventure' AND PS4 = 'TRUE' AND ESRB = 'Everyone'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
                     elif platform == 'PS4' and genre == 'Action-Adventure' and rating == 'Teen':
-                        itr = c.execute("SELECT * from games WHERE genre = 'Action-Adventure' AND PS4 = 'TRUE' AND ESRB = 'Teen'").fetchall()
-                        for x in itr:
-                            if x not in L:
-                                L.append(x)
+                        if platform == 'PS4' and genre == 'Action-Adventure' and rating == 'Teen' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Action-Adventure' AND PS4 = 'TRUE' AND ESRB = 'Teen' AND multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'PS4' and genre == 'Action-Adventure' and rating == 'Teen' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Action-Adventure' AND PS4 = 'TRUE' AND ESRB = 'Teen' AND multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Action-Adventure' AND PS4 = 'TRUE' AND ESRB = 'Teen'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
                     elif platform == 'PS4' and genre == 'Action-Adventure' and rating == 'Mature':
-                        itr = c.execute("SELECT * from games WHERE genre = 'Action-Adventure' AND PS4 = 'TRUE' AND ESRB = 'Mature'").fetchall()
-                        for x in itr:
-                            if x not in L:
-                                L.append(x)
+                        if platform == 'PS4' and genre == 'Action-Adventure' and rating == 'Mature' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Action-Adventure' AND PS4 = 'TRUE' AND ESRB = 'Mature' AND multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'PS4' and genre == 'Action-Adventure' and rating == 'Mature' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Action-Adventure' and PS4 = 'TRUE' AND ESRB = 'Mature' AND multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Action-Adventure' AND PS4 = 'TRUE' AND ESRB = 'Mature'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
                     else:
                         itr = c.execute("SELECT * from games WHERE genre = 'Action-Adventure' AND PS4 = 'TRUE'").fetchall()
                         for x in itr:
@@ -203,20 +239,53 @@ class GameFrame(Frame):
                                 L.append(x)
                 elif platform == 'PS4' and genre == 'Fighting':
                     if platform == 'PS4' and genre == 'Fighting' and rating == 'Everyone':
-                        itr = c.execute("SELECT * from games WHERE genre = 'Fighting' AND PS4 = 'TRUE' AND ESRB = 'Everyone'").fetchall()
-                        for x in itr:
-                            if x not in L:
-                                L.append(x)
+                        if platform == 'PS4' and genre == 'Fighting' and rating == 'Everyone' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Fighting' AND PS4 = 'TRUE' AND ESRB = 'Everyone' AND multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'PS4' and genre == 'Fighting' and rating == 'Everyone' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Fighting' AND PS4 = 'TRUE' AND ESRB = 'Everyone' AND multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Fighting' AND PS4 = 'TRUE' AND ESRB = 'Everyone'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
                     elif platform == 'PS4' and genre == 'Fighting' and rating == 'Teen':
-                        itr = c.execute("SELECT * from games WHERE genre = 'Fighting' AND PS4 = 'TRUE' AND ESRB = 'Teen'").fetchall()
-                        for x in itr:
-                            if x not in L:
-                                L.append(x)
+                        if platform == 'PS4' and genre == 'Fighting' and rating == 'Teen' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Fighting' AND PS4 = 'TRUE' AND ESRB = 'Teen' AND multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'PS4' and genre == 'Fighting' and rating == 'Teen' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Fighting' AND PS4 = 'TRUE' AND ESRB = 'Teen' AND multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Fighting' AND PS4 = 'TRUE' AND ESRB = 'Teen'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
                     elif platform == 'PS4' and genre == 'Fighting' and rating == 'Mature':
-                        itr = c.execute("SELECT * from games WHERE genre = 'Fighting' AND PS4 = 'TRUE' AND ESRB = 'Mature'").fetchall()
-                        for x in itr:
-                            if x not in L:
-                                L.append(x)
+                        if platform == 'PS4' and genre == 'Fighting' and rating == 'Mature' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Fighting' AND PS4 = 'TRUE' AND ESRB = 'Mature' AND multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'PS4' and genre == 'Fighting' and rating == 'Mature' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Fighting' AND PS4 = 'TRUE' AND ESRB = 'Mature' AND multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Fighting' AND PS4 = 'TRUE' AND ESRB = 'Mature'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
                     else:
                         itr = c.execute("SELECT * from games WHERE genre = 'Fighting' AND PS4 = 'TRUE'").fetchall()
                         for x in itr:
@@ -224,20 +293,53 @@ class GameFrame(Frame):
                                 L.append(x)
                 elif platform == 'PS4' and genre == 'Role-Playing':
                     if platform == 'PS4' and genre == 'Role-Playing' and rating == 'Everyone':
-                        itr = c.execute("SELECT * from games WHERE genre = 'Role-Playing' AND PS4 = 'TRUE' AND ESRB = 'Everyone'").fetchall()
-                        for x in itr:
-                            if x not in L:
-                                L.append(x)
+                        if platform == 'PS4' and genre == 'Role-Playing' and rating == 'Everyone' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Role-Playing' AND PS4 = 'TRUE' and ESRB = 'Everyone' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'PS4' and genre == 'Role-Playing' and rating == 'Everyone' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Role-Playing' AND PS4 = 'TRUE' and ESRB = 'Everyone' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:    
+                            itr = c.execute("SELECT * from games WHERE genre = 'Role-Playing' AND PS4 = 'TRUE' AND ESRB = 'Everyone'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
                     elif platform == 'PS4' and genre == 'Role-Playing' and rating == 'Teen':
-                        itr = c.execute("SELECT * from games WHERE genre = 'Role-Playing' AND PS4 = 'TRUE' AND ESRB = 'Teen'").fetchall()
-                        for x in itr:
-                            if x not in L:
-                                L.append(x)
+                        if platform == 'PS4' and genre == 'Role-Playing' and rating == 'Teen' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Role-Playing' AND PS4 = 'TRUE' and ESRB = 'Teen' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'PS4' and genre == 'Role-Playing' and rating == 'Teen' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Role-Playing' AND PS4 = 'TRUE' and ESRB = 'Teen' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Role-Playing' AND PS4 = 'TRUE' AND ESRB = 'Teen'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
                     elif platform == 'PS4' and genre == 'Role-Playing' and rating == 'Mature':
-                        itr = c.execute("SELECT * from games WHERE genre = 'Role-Playing' AND PS4 = 'TRUE' AND ESRB = 'Mature'").fetchall()
-                        for x in itr:
-                            if x not in L:
-                                L.append(x)
+                        if platform == 'PS4' and genre == 'Role-Playing' and rating == 'Mature' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Role-Playing' AND PS4 = 'TRUE' and ESRB = 'Mature' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'PS4' and genre == 'Role-Playing' and rating == 'Mature' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Role-Playing' AND PS4 = 'TRUE' and ESRB = 'Mature' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Role-Playing' AND PS4 = 'TRUE' AND ESRB = 'Mature'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
                     else:
                         itr = c.execute("SELECT * from games WHERE genre = 'Role-Playing' AND PS4 = 'TRUE'").fetchall()
                         for x in itr:
@@ -245,20 +347,53 @@ class GameFrame(Frame):
                                 L.append(x)
                 elif platform == 'PS4' and genre == 'Shooter':
                     if platform == 'PS4' and genre == 'Shooter' and rating == 'Everyone':
-                        itr = c.execute("SELECT * from games WHERE genre = 'Shooter' AND PS4 = 'TRUE' AND ESRB = 'Everyone'").fetchall()
-                        for x in itr:
-                            if x not in L:
-                                L.append(x)
+                        if platform == 'PS4' and genre == 'Shooter' and rating == 'Everyone' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games where genre = 'Shooter' and PS4 = 'TRUE' and ESRB = 'Everyone' AND multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'PS4' and genre == 'Shooter' and rating == 'Everyone' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games where genre = 'Shooter' and PS4 = 'TRUE' and ESRB = 'Everyone' AND multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Shooter' AND PS4 = 'TRUE' AND ESRB = 'Everyone'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
                     elif platform == 'PS4' and genre == 'Shooter' and rating == 'Teen':
-                        itr = c.execute("SELECT * from games WHERE genre = 'Shooter' AND PS4 = 'TRUE' AND ESRB = 'Teen'").fetchall()
-                        for x in itr:
-                            if x not in L:
-                                L.append(x)
-                    elif platform == 'PS4' and genre == 'Fighting' and rating == 'Mature':
-                        itr = c.execute("SELECT * from games WHERE genre = 'Shooter' AND PS4 = 'TRUE' AND ESRB = 'Mature'").fetchall()
-                        for x in itr:
-                            if x not in L:
-                                L.append(x)
+                        if platform == 'PS4' and genre == 'Shooter' and rating == 'Teen' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games where genre = 'Shooter' and PS4 = 'TRUE' and ESRB = 'Teen' AND multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'PS4' and genre == 'Shooter' and rating == 'Teen' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games where genre = 'Shooter' and PS4 = 'TRUE' and ESRB = 'Teen' AND multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:            
+                            itr = c.execute("SELECT * from games WHERE genre = 'Shooter' AND PS4 = 'TRUE' AND ESRB = 'Teen'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    elif platform == 'PS4' and genre == 'Shooter' and rating == 'Mature':
+                        if platform == 'PS4' and genre == 'Shooter' and rating == 'Mature' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games where genre = 'Shooter' and PS4 = 'TRUE' and ESRB = 'Mature' AND multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'PS4' and genre == 'Shooter' and rating == 'Mature' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games where genre = 'Shooter' and PS4 = 'TRUE' and ESRB = 'Mature' AND multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Shooter' AND PS4 = 'TRUE' AND ESRB = 'Mature'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
                     else:
                         itr = c.execute("SELECT * from games WHERE genre = 'Shooter' AND PS4 = 'TRUE'").fetchall()
                         for x in itr:
@@ -266,20 +401,53 @@ class GameFrame(Frame):
                                 L.append(x)
                 elif platform == 'PS4' and genre == 'Survival Horror':
                     if platform == 'PS4' and genre == 'Survival Horror' and rating == 'Everyone':
-                        itr = c.execute("SELECT * from games WHERE genre = 'Survival Horror' AND PS4 = 'TRUE' AND ESRB = 'Everyone'").fetchall()
-                        for x in itr:
-                            if x not in L:
-                                L.append(x)
+                        if platform == 'PS4' and genre == 'Survival Horror' and rating == 'Everyone' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Survival Horror' AND PS4 = 'TRUE' AND ESRB = 'Everyone' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'PS4' and genre == 'Survival Horror' and rating == 'Everyone' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Survival Horror' AND PS4 = 'TRUE' AND ESRB = 'Everyone' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:    
+                            itr = c.execute("SELECT * from games WHERE genre = 'Survival Horror' AND PS4 = 'TRUE' AND ESRB = 'Everyone'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
                     elif platform == 'PS4' and genre == 'Survival Horror' and rating == 'Teen':
-                        itr = c.execute("SELECT * from games WHERE genre = 'Survival Horror' AND PS4 = 'TRUE' AND ESRB = 'Teen'").fetchall()
-                        for x in itr:
-                            if x not in L:
-                                L.append(x)
+                        if platform == 'PS4' and genre == 'Survival Horror' and rating == 'Teen' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Survival Horror' AND PS4 = 'TRUE' AND ESRB = 'Teen' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'PS4' and genre == 'Survival Horror' and rating == 'Teen' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Survival Horror' AND PS4 = 'TRUE' AND ESRB = 'Teen' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Survival Horror' AND PS4 = 'TRUE' AND ESRB = 'Teen'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
                     elif platform == 'PS4' and genre == 'Survival Horror' and rating == 'Mature':
-                        itr = c.execute("SELECT * from games WHERE genre = 'Survival Horror' AND PS4 = 'TRUE' AND ESRB = 'Mature'").fetchall()
-                        for x in itr:
-                            if x not in L:
-                                L.append(x)
+                        if platform == 'PS4' and genre == 'Survival Horror' and rating == 'Mature' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Survival Horror' AND PS4 = 'TRUE' AND ESRB = 'Mature' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'PS4' and genre == 'Survival Horror' and rating == 'Mature' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Survival Horror' AND PS4 = 'TRUE' AND ESRB = 'Mature' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Survival Horror' AND PS4 = 'TRUE' AND ESRB = 'Mature'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
                     else:
                         itr = c.execute("SELECT * from games WHERE genre = 'Survival Horror' AND PS4 = 'TRUE'").fetchall()
                         for x in itr:
@@ -287,20 +455,53 @@ class GameFrame(Frame):
                                 L.append(x)
                 elif platform == 'PS4' and genre == 'Party Game':
                     if platform == 'PS4' and genre == 'Party Game' and rating == 'Everyone':
-                        itr = c.execute("SELECT * from games WHERE genre = 'Party Game' AND PS4 = 'TRUE' AND ESRB = 'Everyone'").fetchall()
-                        for x in itr:
-                            if x not in L:
-                                L.append(x)
+                        if platform == 'PS4' and genre == 'Party Game' and rating == 'Everyone' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Party Game' AND PS4 = 'TRUE' AND ESRB = 'Everyone' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'PS4' and genre == 'Party Game' and rating == 'Everyone' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Party Game' AND PS4 = 'TRUE' AND ESRB = 'Everyone' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Party Game' AND PS4 = 'TRUE' AND ESRB = 'Everyone'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
                     elif platform == 'PS4' and genre == 'Party Game' and rating == 'Teen':
-                        itr = c.execute("SELECT * from games WHERE genre = 'Party Game' AND PS4 = 'TRUE' AND ESRB = 'Teen'").fetchall()
-                        for x in itr:
-                            if x not in L:
-                                L.append(x)
+                        if platform == 'PS4' and genre == 'Party Game' and rating == 'Teen' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Party Game' AND PS4 = 'TRUE' AND ESRB = 'Teen' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'PS4' and genre == 'Party Game' and rating == 'Everyone' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Party Game' AND PS4 = 'TRUE' AND ESRB = 'Teen' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Party Game' AND PS4 = 'TRUE' AND ESRB = 'Teen'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
                     elif platform == 'PS4' and genre == 'Party Game' and rating == 'Mature':
-                        itr = c.execute("SELECT * from games WHERE genre = 'Party Game' AND PS4 = 'TRUE' AND ESRB = 'Mature'").fetchall()
-                        for x in itr:
-                            if x not in L:
-                                L.append(x)
+                        if platform == 'PS4' and genre == 'Party Game' and rating == 'Mature' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Party Game' AND PS4 = 'TRUE' AND ESRB = 'Mature' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'PS4' and genre == 'Party Game' and rating == 'Mature' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Party Game' AND PS4 = 'TRUE' AND ESRB = 'Mature' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Party Game' AND PS4 = 'TRUE' AND ESRB = 'Mature'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
                     else:
                         itr = c.execute("SELECT * from games WHERE genre = 'Party Game' AND PS4 = 'TRUE'").fetchall()
                         for x in itr:
@@ -308,20 +509,53 @@ class GameFrame(Frame):
                                 L.append(x)
                 elif platform == 'PS4' and genre == 'Platformer':
                     if platform == 'PS4' and genre == 'Platformer' and rating == 'Everyone':
-                        itr = c.execute("SELECT * from games WHERE genre = 'Platformer' AND PS4 = 'TRUE' AND ESRB = 'Everyone'").fetchall()
-                        for x in itr:
-                            if x not in L:
-                                L.append(x)
+                        if platform == 'PS4' and genre == 'Platformer' and rating == 'Everyone' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Platformer' AND PS4 = 'TRUE' AND ESRB = 'Everyone' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'PS4' and genre == 'Platformer' and rating == 'Everyone' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Platformer' AND PS4 = 'TRUE' AND ESRB = 'Everyone' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Platformer' AND PS4 = 'TRUE' AND ESRB = 'Everyone'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
                     elif platform == 'PS4' and genre == 'Platformer' and rating == 'Teen':
-                        itr = c.execute("SELECT * from games WHERE genre = 'Platformer' AND PS4 = 'TRUE' AND ESRB = 'Teen'").fetchall()
-                        for x in itr:
-                            if x not in L:
-                                L.append(x)
+                        if platform == 'PS4' and genre == 'Platformer' and rating == 'Teen' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Platformer' AND PS4 = 'TRUE' AND ESRB = 'Teen' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'PS4' and genre == 'Platformer' and rating == 'Teen' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Platformer' AND PS4 = 'TRUE' AND ESRB = 'Teen' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Platformer' AND PS4 = 'TRUE' AND ESRB = 'Teen'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
                     elif platform == 'PS4' and genre == 'Platformer' and rating == 'Mature':
-                        itr = c.execute("SELECT * from games WHERE genre = 'Platformer' AND PS4 = 'TRUE' AND ESRB = 'Mature'").fetchall()
-                        for x in itr:
-                            if x not in L:
-                                L.append(x)
+                        if platform == 'PS4' and genre == 'Platformer' and rating == 'Mature' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Platformer' AND PS4 = 'TRUE' AND ESRB = 'Mature' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'PS4' and genre == 'Platformer' and rating == 'Everyone' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Platformer' AND PS4 = 'TRUE' AND ESRB = 'Mature' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Platformer' AND PS4 = 'TRUE' AND ESRB = 'Mature'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
                     else:
                         itr = c.execute("SELECT * from games WHERE genre = 'Platformer' AND PS4 = 'TRUE'").fetchall()
                         for x in itr:
@@ -329,41 +563,107 @@ class GameFrame(Frame):
                                 L.append(x)
                 elif platform == 'PS4' and genre == 'Racing':
                     if platform == 'PS4' and genre == 'Racing' and rating == 'Everyone':
-                        itr = c.execute("SELECT * from games WHERE genre = 'Racing' AND PS4 = 'TRUE' AND ESRB = 'Everyone'").fetchall()
-                        for x in itr:
-                            if x not in L:
-                                L.append(x)
+                        if platform == 'PS4' and genre == 'Racing' and rating == 'Everyone' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Racing' AND PS4 = 'TRUE' AND ESRB = 'Everyone' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'PS4' and genre == 'Racing' and rating == 'Everyone' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Racing' AND PS4 = 'TRUE' AND ESRB = 'Everyone' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Racing' AND PS4 = 'TRUE' AND ESRB = 'Everyone'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
                     elif platform == 'PS4' and genre == 'Racing' and rating == 'Teen':
-                        itr = c.execute("SELECT * from games WHERE genre = 'Racing' AND PS4 = 'TRUE' AND ESRB = 'Teen'").fetchall()
-                        for x in itr:
-                            if x not in L:
-                                L.append(x)
+                        if platform == 'PS4' and genre == 'Racing' and rating == 'Teen' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Racing' AND PS4 = 'TRUE' AND ESRB = 'Teen' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'PS4' and genre == 'Racing' and rating == 'Teen' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Racing' AND PS4 = 'TRUE' AND ESRB = 'Teen' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Racing' AND PS4 = 'TRUE' AND ESRB = 'Teen'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
                     elif platform == 'PS4' and genre == 'Racing' and rating == 'Mature':
-                        itr = c.execute("SELECT * from games WHERE genre = 'Racing' AND PS4 = 'TRUE' AND ESRB = 'Mature'").fetchall()
-                        for x in itr:
-                            if x not in L:
-                                L.append(x)
+                        if platform == 'PS4' and genre == 'Racing' and rating == 'Mature' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Racing' AND PS4 = 'TRUE' AND ESRB = 'Mature' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'PS4' and genre == 'Racing' and rating == 'Mature' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Racing' AND PS4 = 'TRUE' AND ESRB = 'Mature' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Racing' AND PS4 = 'TRUE' AND ESRB = 'Mature'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
                     else:
-                        itr = c.execute("SELECT * from games WHERE genre = 'Racing ' AND PS4 = 'TRUE'").fetchall()
+                        itr = c.execute("SELECT * from games WHERE genre = 'Racing' AND PS4 = 'TRUE'").fetchall()
                         for x in itr:
                             if x not in L:
                                 L.append(x)
                 elif platform == 'PS4' and genre == 'Rhythm Game':
                     if platform == 'PS4' and genre == 'Rhythm Game' and rating == 'Everyone':
-                        itr = c.execute("SELECT * from games WHERE genre = 'Rhythm Game' AND PS4 = 'TRUE' AND ESRB = 'Everyone'").fetchall()
-                        for x in itr:
-                            if x not in L:
-                                L.append(x)
+                        if platform == 'PS4' and genre == 'Rhythm Game' and rating == 'Everyone' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Rhythm Game' AND PS4 = 'TRUE' AND ESRB = 'Everyone' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'PS4' and genre == 'Rhythm Game' and rating == 'Everyone' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Rhythm Game' AND PS4 = 'TRUE' AND ESRB = 'Everyone' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Rhythm Game' AND PS4 = 'TRUE' AND ESRB = 'Everyone'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
                     elif platform == 'PS4' and genre == 'Rhythm Game' and rating == 'Teen':
-                        itr = c.execute("SELECT * from games WHERE genre = 'Rhythm' AND PS4 = 'TRUE' AND ESRB = 'Teen'").fetchall()
-                        for x in itr:
-                            if x not in L:
-                                L.append(x)
+                        if platform == 'PS4' and genre == 'Rhythm Game' and rating == 'Teen' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Rhythm Game' AND PS4 = 'TRUE' AND ESRB = 'Teen' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'PS4' and genre == 'Rhythm Game' and rating == 'Teen' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Rhythm Game' AND PS4 = 'TRUE' AND ESRB = 'Teen' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Rhythm Game' AND PS4 = 'TRUE' AND ESRB = 'Teen'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
                     elif platform == 'PS4' and genre == 'Rhythm Game' and rating == 'Mature':
-                        itr = c.execute("SELECT * from games WHERE genre = 'Rhythm Game' AND PS4 = 'TRUE' AND ESRB = 'Mature'").fetchall()
-                        for x in itr:
-                            if x not in L:
-                                L.append(x)
+                        if platform == 'PS4' and genre == 'Rhythm Game' and rating == 'Mature' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Rhythm Game' AND PS4 = 'TRUE' AND ESRB = 'Mature' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'PS4' and genre == 'Rhythm Game' and rating == 'Mature' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Rhythm Game' AND PS4 = 'TRUE' AND ESRB = 'Mature' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Rhythm Game' AND PS4 = 'TRUE' AND ESRB = 'Mature'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
                     else:
                         itr = c.execute("SELECT * from games WHERE genre = 'Rhythm Game' AND PS4 = 'TRUE'").fetchall()
                         for x in itr:
@@ -374,54 +674,1958 @@ class GameFrame(Frame):
                     for x in itr:
                         if x not in L:
                             L.append(x)
-            
-            if xbox == 'True':
-                itr = c.execute("SELECT DISTINCT * FROM games WHERE xbone = 'TRUE'").fetchall()
-                for x in itr:
-                    if x not in L:
-                        L.append(x)
+                
+###############################################################################################################################################
+###############################################################################################################################################
+            elif xbox == 'True':
+                if platform == 'XBoxOne' and genre == 'Action-Adventure':
+                    if platform == 'XBoxOne' and genre == 'Action-Adventure' and rating == 'Everyone':
+                        if platform == 'XBoxOne' and genre == 'Action Adventure' and rating == 'Everyone' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Action-Adventure' AND xbone = 'TRUE' AND ESRB = 'Everyone' AND multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)  
+                        elif platform == 'XBoxOne' and genre == 'Action Adventure' and rating == 'Everyone' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Action-Adventure' AND xbone = 'TRUE' AND ESRB = 'Everyone' AND multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Action-Adventure' AND xbone = 'TRUE' AND ESRB = 'Everyone'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    elif platform == 'XBoxOne' and genre == 'Action-Adventure' and rating == 'Teen':
+                        if platform == 'XBoxOne' and genre == 'Action-Adventure' and rating == 'Teen' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Action-Adventure' AND xbone = 'TRUE' AND ESRB = 'Teen' AND multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'XBoxOne' and genre == 'Action-Adventure' and rating == 'Teen' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Action-Adventure' AND xbone = 'TRUE' AND ESRB = 'Teen' AND multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Action-Adventure' AND xbone = 'TRUE' AND ESRB = 'Teen'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    elif platform == 'XBoxOne' and genre == 'Action-Adventure' and rating == 'Mature':
+                        if platform == 'XBoxOne' and genre == 'Action-Adventure' and rating == 'Mature' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Action-Adventure' AND xbone = 'TRUE' AND ESRB = 'Mature' AND multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'XBoxOne' and genre == 'Action-Adventure' and rating == 'Mature' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Action-Adventure' and xbone = 'TRUE' AND ESRB = 'Mature' AND multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Action-Adventure' AND xbone = 'TRUE' AND ESRB = 'Mature'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    else:
+                        itr = c.execute("SELECT * from games WHERE genre = 'Action-Adventure' AND xbone = 'TRUE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                elif platform == 'XBoxOne' and genre == 'Fighting':
+                    if platform == 'XBoxOne' and genre == 'Fighting' and rating == 'Everyone':
+                        if platform == 'XBoxOne' and genre == 'Fighting' and rating == 'Everyone' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Fighting' AND xbone = 'TRUE' AND ESRB = 'Everyone' AND multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'XBoxOne' and genre == 'Fighting' and rating == 'Everyone' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Fighting' AND xbone = 'TRUE' AND ESRB = 'Everyone' AND multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Fighting' AND xbone = 'TRUE' AND ESRB = 'Everyone'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    elif platform == 'XBoxOne' and genre == 'Fighting' and rating == 'Teen':
+                        if platform == 'XBoxOne' and genre == 'Fighting' and rating == 'Teen' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Fighting' AND xbone = 'TRUE' AND ESRB = 'Teen' AND multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'XBoxOne' and genre == 'Fighting' and rating == 'Teen' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Fighting' AND xbone = 'TRUE' AND ESRB = 'Teen' AND multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Fighting' AND xbone = 'TRUE' AND ESRB = 'Teen'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    elif platform == 'XBoxOne' and genre == 'Fighting' and rating == 'Mature':
+                        if platform == 'XBoxOne' and genre == 'Fighting' and rating == 'Mature' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Fighting' AND xbone = 'TRUE' AND ESRB = 'Mature' AND multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'XBoxOne' and genre == 'Fighting' and rating == 'Mature' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Fighting' AND xbone = 'TRUE' AND ESRB = 'Mature' AND multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Fighting' AND xbone = 'TRUE' AND ESRB = 'Mature'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    else:
+                        itr = c.execute("SELECT * from games WHERE genre = 'Fighting' AND xbone = 'TRUE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                elif platform == 'XBoxOne' and genre == 'Role-Playing':
+                    if platform == 'XBoxOne' and genre == 'Role-Playing' and rating == 'Everyone':
+                        if platform == 'XBoxOne' and genre == 'Role-Playing' and rating == 'Everyone' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Role-Playing' AND xbone = 'TRUE' and ESRB = 'Everyone' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'XBoxOne' and genre == 'Role-Playing' and rating == 'Everyone' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Role-Playing' AND xbone = 'TRUE' and ESRB = 'Everyone' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:    
+                            itr = c.execute("SELECT * from games WHERE genre = 'Role-Playing' AND xbone = 'TRUE' AND ESRB = 'Everyone'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    elif platform == 'XBoxOne' and genre == 'Role-Playing' and rating == 'Teen':
+                        if platform == 'XBoxOne' and genre == 'Role-Playing' and rating == 'Teen' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Role-Playing' AND xbone = 'TRUE' and ESRB = 'Teen' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'XBoxOne' and genre == 'Role-Playing' and rating == 'Teen' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Role-Playing' AND xbone = 'TRUE' and ESRB = 'Teen' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Role-Playing' AND xbone = 'TRUE' AND ESRB = 'Teen'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    elif platform == 'XBoxOne' and genre == 'Role-Playing' and rating == 'Mature':
+                        if platform == 'XBoxOne' and genre == 'Role-Playing' and rating == 'Mature' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Role-Playing' AND xbone = 'TRUE' and ESRB = 'Mature' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'XBoxOne' and genre == 'Role-Playing' and rating == 'Mature' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Role-Playing' AND xbone = 'TRUE' and ESRB = 'Mature' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Role-Playing' AND xbone = 'TRUE' AND ESRB = 'Mature'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    else:
+                        itr = c.execute("SELECT * from games WHERE genre = 'Role-Playing' AND xbone = 'TRUE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                elif platform == 'XBoxOne' and genre == 'Shooter':
+                    if platform == 'XBoxOne' and genre == 'Shooter' and rating == 'Everyone':
+                        if platform == 'XBoxOne' and genre == 'Shooter' and rating == 'Everyone' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games where genre = 'Shooter' and xbone = 'TRUE' and ESRB = 'Everyone' AND multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'XBoxOne' and genre == 'Shooter' and rating == 'Everyone' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games where genre = 'Shooter' and xbone = 'TRUE' and ESRB = 'Everyone' AND multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Shooter' AND xbone = 'TRUE' AND ESRB = 'Everyone'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    elif platform == 'XBoxOne' and genre == 'Shooter' and rating == 'Teen':
+                        if platform == 'XBoxOne' and genre == 'Shooter' and rating == 'Teen' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games where genre = 'Shooter' and xbone = 'TRUE' and ESRB = 'Teen' AND multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'XBoxOne' and genre == 'Shooter' and rating == 'Teen' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games where genre = 'Shooter' and xbone = 'TRUE' and ESRB = 'Teen' AND multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:            
+                            itr = c.execute("SELECT * from games WHERE genre = 'Shooter' AND xbone = 'TRUE' AND ESRB = 'Teen'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    elif platform == 'XBoxOne' and genre == 'Shooter' and rating == 'Mature':
+                        if platform == 'XBoxOne' and genre == 'Shooter' and rating == 'Mature' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games where genre = 'Shooter' and xbone = 'TRUE' and ESRB = 'Mature' AND multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'XBoxOne' and genre == 'Shooter' and rating == 'Mature' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games where genre = 'Shooter' and xbone = 'TRUE' and ESRB = 'Mature' AND multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Shooter' AND xbone = 'TRUE' AND ESRB = 'Mature'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    else:
+                        itr = c.execute("SELECT * from games WHERE genre = 'Shooter' AND xbone = 'TRUE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                elif platform == 'XBoxOne' and genre == 'Survival Horror':
+                    if platform == 'XBoxOne' and genre == 'Survival Horror' and rating == 'Everyone':
+                        if platform == 'XBoxOne' and genre == 'Survival Horror' and rating == 'Everyone' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Survival Horror' AND xbone = 'TRUE' AND ESRB = 'Everyone' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'xbone' and genre == 'Survival Horror' and rating == 'Everyone' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Survival Horror' AND xbone = 'TRUE' AND ESRB = 'Everyone' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:    
+                            itr = c.execute("SELECT * from games WHERE genre = 'Survival Horror' AND xbone = 'TRUE' AND ESRB = 'Everyone'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    elif platform == 'XBoxOne' and genre == 'Survival Horror' and rating == 'Teen':
+                        if platform == 'XBoxOne' and genre == 'Survival Horror' and rating == 'Teen' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Survival Horror' AND xbone = 'TRUE' AND ESRB = 'Teen' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'XBoxOne' and genre == 'Survival Horror' and rating == 'Teen' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Survival Horror' AND xbone = 'TRUE' AND ESRB = 'Teen' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Survival Horror' AND xbone = 'TRUE' AND ESRB = 'Teen'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    elif platform == 'XBoxOne' and genre == 'Survival Horror' and rating == 'Mature':
+                        if platform == 'XBoxOne' and genre == 'Survival Horror' and rating == 'Mature' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Survival Horror' AND xbone = 'TRUE' AND ESRB = 'Mature' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'XBoxOne' and genre == 'Survival Horror' and rating == 'Mature' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Survival Horror' AND xbone = 'TRUE' AND ESRB = 'Mature' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Survival Horror' AND xbone = 'TRUE' AND ESRB = 'Mature'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    else:
+                        itr = c.execute("SELECT * from games WHERE genre = 'Survival Horror' AND xbone = 'TRUE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                elif platform == 'XBoxOne' and genre == 'Party Game':
+                    if platform == 'XBoxOne' and genre == 'Party Game' and rating == 'Everyone':
+                        if platform == 'XBoxOne' and genre == 'Party Game' and rating == 'Everyone' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Party Game' AND xbone = 'TRUE' AND ESRB = 'Everyone' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'XBoxOne' and genre == 'Party Game' and rating == 'Everyone' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Party Game' AND xbone = 'TRUE' AND ESRB = 'Everyone' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Party Game' AND xbone = 'TRUE' AND ESRB = 'Everyone'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    elif platform == 'XBoxOne' and genre == 'Party Game' and rating == 'Teen':
+                        if platform == 'XBoxOne' and genre == 'Party Game' and rating == 'Teen' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Party Game' AND xbone = 'TRUE' AND ESRB = 'Teen' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'XBoxOne' and genre == 'Party Game' and rating == 'Everyone' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Party Game' AND xbone = 'TRUE' AND ESRB = 'Teen' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Party Game' AND xbone = 'TRUE' AND ESRB = 'Teen'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    elif platform == 'XBoxOne' and genre == 'Party Game' and rating == 'Mature':
+                        if platform == 'XBoxOne' and genre == 'Party Game' and rating == 'Mature' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Party Game' AND xbone = 'TRUE' AND ESRB = 'Mature' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'XBoxOne' and genre == 'Party Game' and rating == 'Mature' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Party Game' AND xbone = 'TRUE' AND ESRB = 'Mature' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Party Game' AND xbone = 'TRUE' AND ESRB = 'Mature'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    else:
+                        itr = c.execute("SELECT * from games WHERE genre = 'Party Game' AND xbone = 'TRUE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                elif platform == 'XBoxOne' and genre == 'Platformer':
+                    if platform == 'XBoxOne' and genre == 'Platformer' and rating == 'Everyone':
+                        if platform == 'XBoxOne' and genre == 'Platformer' and rating == 'Everyone' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Platformer' AND xbone = 'TRUE' AND ESRB = 'Everyone' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'XBoxOne' and genre == 'Platformer' and rating == 'Everyone' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Platformer' AND xbone = 'TRUE' AND ESRB = 'Everyone' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Platformer' AND xbone = 'TRUE' AND ESRB = 'Everyone'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    elif platform == 'XBoxOne' and genre == 'Platformer' and rating == 'Teen':
+                        if platform == 'XBoxOne' and genre == 'Platformer' and rating == 'Teen' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Platformer' AND xbone = 'TRUE' AND ESRB = 'Teen' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'XBoxOne' and genre == 'Platformer' and rating == 'Teen' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Platformer' AND xbone = 'TRUE' AND ESRB = 'Teen' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Platformer' AND xbone = 'TRUE' AND ESRB = 'Teen'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    elif platform == 'XBoxOne' and genre == 'Platformer' and rating == 'Mature':
+                        if platform == 'XBoxOne' and genre == 'Platformer' and rating == 'Mature' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Platformer' AND xbone = 'TRUE' AND ESRB = 'Mature' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'XBoxOne' and genre == 'Platformer' and rating == 'Everyone' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Platformer' AND xbone = 'TRUE' AND ESRB = 'Mature' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Platformer' AND xbone = 'TRUE' AND ESRB = 'Mature'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    else:
+                        itr = c.execute("SELECT * from games WHERE genre = 'Platformer' AND xbone = 'TRUE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                elif platform == 'XBoxOne' and genre == 'Racing':
+                    if platform == 'XBoxOne' and genre == 'Racing' and rating == 'Everyone':
+                        if platform == 'XBoxOne' and genre == 'Racing' and rating == 'Everyone' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Racing' AND xbone = 'TRUE' AND ESRB = 'Everyone' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'XBoxOne' and genre == 'Racing' and rating == 'Everyone' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Racing' AND xbone = 'TRUE' AND ESRB = 'Everyone' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Racing' AND xbone = 'TRUE' AND ESRB = 'Everyone'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    elif platform == 'XBoxOne' and genre == 'Racing' and rating == 'Teen':
+                        if platform == 'XBoxOne' and genre == 'Racing' and rating == 'Teen' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Racing' AND xbone = 'TRUE' AND ESRB = 'Teen' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'XBoxOne' and genre == 'Racing' and rating == 'Teen' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Racing' AND xbone = 'TRUE' AND ESRB = 'Teen' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Racing' AND xbone = 'TRUE' AND ESRB = 'Teen'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    elif platform == 'XBoxOne' and genre == 'Racing' and rating == 'Mature':
+                        if platform == 'XBoxOne' and genre == 'Racing' and rating == 'Mature' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Racing' AND xbone = 'TRUE' AND ESRB = 'Mature' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'XBoxOne' and genre == 'Racing' and rating == 'Mature' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Racing' AND xbone = 'TRUE' AND ESRB = 'Mature' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Racing' AND xbone = 'TRUE' AND ESRB = 'Mature'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    else:
+                        itr = c.execute("SELECT * from games WHERE genre = 'Racing' AND xbone = 'TRUE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                elif platform == 'XBoxOne' and genre == 'Rhythm Game':
+                    if platform == 'XBoxOne' and genre == 'Rhythm Game' and rating == 'Everyone':
+                        if platform == 'XBoxOne' and genre == 'Rhythm Game' and rating == 'Everyone' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Rhythm Game' AND xbone = 'TRUE' AND ESRB = 'Everyone' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'XBoxOne' and genre == 'Rhythm Game' and rating == 'Everyone' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Rhythm Game' AND xbone = 'TRUE' AND ESRB = 'Everyone' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Rhythm Game' AND xbone = 'TRUE' AND ESRB = 'Everyone'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    elif platform == 'XBoxOne' and genre == 'Rhythm Game' and rating == 'Teen':
+                        if platform == 'XBoxOne' and genre == 'Rhythm Game' and rating == 'Teen' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Rhythm Game' AND xbone = 'TRUE' AND ESRB = 'Teen' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'XBoxOne' and genre == 'Rhythm Game' and rating == 'Teen' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Rhythm Game' AND xbone = 'TRUE' AND ESRB = 'Teen' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Rhythm Game' AND xbone = 'TRUE' AND ESRB = 'Teen'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    elif platform == 'XBoxOne' and genre == 'Rhythm Game' and rating == 'Mature':
+                        if platform == 'XBoxOne' and genre == 'Rhythm Game' and rating == 'Mature' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Rhythm Game' AND xbone = 'TRUE' AND ESRB = 'Mature' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'XBoxOne' and genre == 'Rhythm Game' and rating == 'Mature' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Rhythm Game' AND xbone = 'TRUE' AND ESRB = 'Mature' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Rhythm Game' AND xbone = 'TRUE' AND ESRB = 'Mature'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    else:
+                        itr = c.execute("SELECT * from games WHERE genre = 'Rhythm Game' AND xbone = 'TRUE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                else :
+                    itr = c.execute("SELECT DISTINCT * FROM games WHERE xbone = 'TRUE'").fetchall()
+                    for x in itr:
+                        if x not in L:
+                            L.append(x) 
+                        
+#########################################################################################################################################
+#########################################################################################################################################            
             elif wii == 'True':
-                itr = c.execute("SELECT DISTINCT * FROM games WHERE wiiu = 'TRUE'").fetchall()
-                for x in itr:
-                    if x not in L:
-                        L.append(x)
-            elif pc == 'True':
-                itr = c.execute("SELECT DISTINCT * FROM games WHERE windows = 'TRUE'").fetchall()
-                for x in itr:
-                    if x not in L:
-                        L.append(x)
-                        
-            if egenre == 'True':
-                if platform == 'PS4' and egenre == 'True':
-                    itr = c.execute("SELECT * from games WHERE genre = 'Action Role-Playing' and ps4 = 'TRUE'").fetchall()
-                    for x in itr:
-                        if x not in L:
-                            L.append(x)
-                else:
-                    itr = c.execute("SELECT DISTINCT * FROM games WHERE genre = ?", [genre]).fetchall()
-                    for x in itr:
-                        if x not in L:
-                            L.append(x)
-                        
-            '''if erating == 'True':
-                itr = c.execute("SELECT DISTINCT * FROM games where ESRB = ?", [rating]).fetchall()
-                for x in itr:
-                    if x not in L:
-                        L.append(x)'''
-                       
-            if multi == 'True':
-                if multip == 'TRUE':
-                    itr = c.execute("SELECT DISTINCT * FROM games WHERE multiplayer = ? AND multiplayer = 'TRUE'", [multip]).fetchall()
-                    for x in itr:
-                        if x not in L:
-                            L.append(x)
-                if multip == 'FALSE':
-                    itr = c.execute("SELECT DISTINCT * FROM games WHERE multiplayer = ? AND multiplayer = 'FALSE'", [multip]).fetchall()
+                if platform == 'WiiU' and genre == 'Action-Adventure':
+                    if platform == 'WiiU' and genre == 'Action-Adventure' and rating == 'Everyone':
+                        if platform == 'WiiU' and genre == 'Action Adventure' and rating == 'Everyone' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Action-Adventure' AND WiiU = 'TRUE' AND ESRB = 'Everyone' AND multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)  
+                        elif platform == 'WiiU' and genre == 'Action Adventure' and rating == 'Everyone' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Action-Adventure' AND WiiU = 'TRUE' AND ESRB = 'Everyone' AND multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Action-Adventure' AND WiiU = 'TRUE' AND ESRB = 'Everyone'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    elif platform == 'WiiU' and genre == 'Action-Adventure' and rating == 'Teen':
+                        if platform == 'WiiU' and genre == 'Action-Adventure' and rating == 'Teen' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Action-Adventure' AND WiiU = 'TRUE' AND ESRB = 'Teen' AND multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'WiiU' and genre == 'Action-Adventure' and rating == 'Teen' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Action-Adventure' AND WiiU = 'TRUE' AND ESRB = 'Teen' AND multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Action-Adventure' AND WiiU = 'TRUE' AND ESRB = 'Teen'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    elif platform == 'WiiU' and genre == 'Action-Adventure' and rating == 'Mature':
+                        if platform == 'WiiU' and genre == 'Action-Adventure' and rating == 'Mature' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Action-Adventure' AND WiiU = 'TRUE' AND ESRB = 'Mature' AND multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'WiiU' and genre == 'Action-Adventure' and rating == 'Mature' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Action-Adventure' and WiiU = 'TRUE' AND ESRB = 'Mature' AND multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Action-Adventure' AND WiiU = 'TRUE' AND ESRB = 'Mature'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    else:
+                        itr = c.execute("SELECT * from games WHERE genre = 'Action-Adventure' AND WiiU = 'TRUE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                elif platform == 'WiiU' and genre == 'Fighting':
+                    if platform == 'WiiU' and genre == 'Fighting' and rating == 'Everyone':
+                        if platform == 'WiiU' and genre == 'Fighting' and rating == 'Everyone' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Fighting' AND WiiU = 'TRUE' AND ESRB = 'Everyone' AND multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'WiiU' and genre == 'Fighting' and rating == 'Everyone' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Fighting' AND WiiU = 'TRUE' AND ESRB = 'Everyone' AND multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Fighting' AND WiiU = 'TRUE' AND ESRB = 'Everyone'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    elif platform == 'WiiU' and genre == 'Fighting' and rating == 'Teen':
+                        if platform == 'WiiU' and genre == 'Fighting' and rating == 'Teen' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Fighting' AND WiiU = 'TRUE' AND ESRB = 'Teen' AND multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'WiiU' and genre == 'Fighting' and rating == 'Teen' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Fighting' AND WiiU = 'TRUE' AND ESRB = 'Teen' AND multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Fighting' AND WiiU = 'TRUE' AND ESRB = 'Teen'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    elif platform == 'WiiU' and genre == 'Fighting' and rating == 'Mature':
+                        if platform == 'WiiU' and genre == 'Fighting' and rating == 'Mature' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Fighting' AND WiiU = 'TRUE' AND ESRB = 'Mature' AND multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'WiiU' and genre == 'Fighting' and rating == 'Mature' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Fighting' AND WiiU = 'TRUE' AND ESRB = 'Mature' AND multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Fighting' AND WiiU = 'TRUE' AND ESRB = 'Mature'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    else:
+                        itr = c.execute("SELECT * from games WHERE genre = 'Fighting' AND WiiU = 'TRUE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                elif platform == 'WiiU' and genre == 'Role-Playing':
+                    if platform == 'WiiU' and genre == 'Role-Playing' and rating == 'Everyone':
+                        if platform == 'WiiU' and genre == 'Role-Playing' and rating == 'Everyone' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Role-Playing' AND WiiU = 'TRUE' and ESRB = 'Everyone' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'WiiU' and genre == 'Role-Playing' and rating == 'Everyone' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Role-Playing' AND WiiU = 'TRUE' and ESRB = 'Everyone' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:    
+                            itr = c.execute("SELECT * from games WHERE genre = 'Role-Playing' AND WiiU = 'TRUE' AND ESRB = 'Everyone'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    elif platform == 'WiiU' and genre == 'Role-Playing' and rating == 'Teen':
+                        if platform == 'WiiU' and genre == 'Role-Playing' and rating == 'Teen' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Role-Playing' AND WiiU = 'TRUE' and ESRB = 'Teen' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'WiiU' and genre == 'Role-Playing' and rating == 'Teen' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Role-Playing' AND WiiU = 'TRUE' and ESRB = 'Teen' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Role-Playing' AND WiiU = 'TRUE' AND ESRB = 'Teen'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    elif platform == 'WiiU' and genre == 'Role-Playing' and rating == 'Mature':
+                        if platform == 'WiiU' and genre == 'Role-Playing' and rating == 'Mature' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Role-Playing' AND WiiU = 'TRUE' and ESRB = 'Mature' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'WiiU' and genre == 'Role-Playing' and rating == 'Mature' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Role-Playing' AND WiiU = 'TRUE' and ESRB = 'Mature' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Role-Playing' AND WiiU = 'TRUE' AND ESRB = 'Mature'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    else:
+                        itr = c.execute("SELECT * from games WHERE genre = 'Role-Playing' AND WiiU = 'TRUE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                elif platform == 'WiiU' and genre == 'Shooter':
+                    if platform == 'WiiU' and genre == 'Shooter' and rating == 'Everyone':
+                        if platform == 'WiiU' and genre == 'Shooter' and rating == 'Everyone' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games where genre = 'Shooter' and WiiU = 'TRUE' and ESRB = 'Everyone' AND multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'WiiU' and genre == 'Shooter' and rating == 'Everyone' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games where genre = 'Shooter' and WiiU = 'TRUE' and ESRB = 'Everyone' AND multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Shooter' AND WiiU = 'TRUE' AND ESRB = 'Everyone'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    elif platform == 'WiiU' and genre == 'Shooter' and rating == 'Teen':
+                        if platform == 'WiiU' and genre == 'Shooter' and rating == 'Teen' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games where genre = 'Shooter' and WiiU = 'TRUE' and ESRB = 'Teen' AND multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'WiiU' and genre == 'Shooter' and rating == 'Teen' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games where genre = 'Shooter' and WiiU = 'TRUE' and ESRB = 'Teen' AND multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:            
+                            itr = c.execute("SELECT * from games WHERE genre = 'Shooter' AND WiiU = 'TRUE' AND ESRB = 'Teen'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    elif platform == 'WiiU' and genre == 'Shooter' and rating == 'Mature':
+                        if platform == 'WiiU' and genre == 'Shooter' and rating == 'Mature' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games where genre = 'Shooter' and WiiU = 'TRUE' and ESRB = 'Mature' AND multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'WiiU' and genre == 'Shooter' and rating == 'Mature' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games where genre = 'Shooter' and WiiU = 'TRUE' and ESRB = 'Mature' AND multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Shooter' AND WiiU = 'TRUE' AND ESRB = 'Mature'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    else:
+                        itr = c.execute("SELECT * from games WHERE genre = 'Shooter' AND WiiU = 'TRUE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                elif platform == 'WiiU' and genre == 'Survival Horror':
+                    if platform == 'WiiU' and genre == 'Survival Horror' and rating == 'Everyone':
+                        if platform == 'WiiU' and genre == 'Survival Horror' and rating == 'Everyone' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Survival Horror' AND WiiU = 'TRUE' AND ESRB = 'Everyone' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'WiiU' and genre == 'Survival Horror' and rating == 'Everyone' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Survival Horror' AND WiiU = 'TRUE' AND ESRB = 'Everyone' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:    
+                            itr = c.execute("SELECT * from games WHERE genre = 'Survival Horror' AND WiiU = 'TRUE' AND ESRB = 'Everyone'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    elif platform == 'WiiU' and genre == 'Survival Horror' and rating == 'Teen':
+                        if platform == 'WiiU' and genre == 'Survival Horror' and rating == 'Teen' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Survival Horror' AND WiiU = 'TRUE' AND ESRB = 'Teen' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'WiiU' and genre == 'Survival Horror' and rating == 'Teen' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Survival Horror' AND WiiU = 'TRUE' AND ESRB = 'Teen' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Survival Horror' AND WiiU = 'TRUE' AND ESRB = 'Teen'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    elif platform == 'WiiU' and genre == 'Survival Horror' and rating == 'Mature':
+                        if platform == 'WiiU' and genre == 'Survival Horror' and rating == 'Mature' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Survival Horror' AND WiiU = 'TRUE' AND ESRB = 'Mature' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'WiiU' and genre == 'Survival Horror' and rating == 'Mature' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Survival Horror' AND WiiU = 'TRUE' AND ESRB = 'Mature' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Survival Horror' AND WiiU = 'TRUE' AND ESRB = 'Mature'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    else:
+                        itr = c.execute("SELECT * from games WHERE genre = 'Survival Horror' AND WiiU = 'TRUE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                elif platform == 'WiiU' and genre == 'Party Game':
+                    if platform == 'WiiU' and genre == 'Party Game' and rating == 'Everyone':
+                        if platform == 'WiiU' and genre == 'Party Game' and rating == 'Everyone' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Party Game' AND WiiU = 'TRUE' AND ESRB = 'Everyone' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'WiiU' and genre == 'Party Game' and rating == 'Everyone' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Party Game' AND WiiU = 'TRUE' AND ESRB = 'Everyone' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Party Game' AND WiiU = 'TRUE' AND ESRB = 'Everyone'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    elif platform == 'WiiU' and genre == 'Party Game' and rating == 'Teen':
+                        if platform == 'WiiU' and genre == 'Party Game' and rating == 'Teen' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Party Game' AND WiiU = 'TRUE' AND ESRB = 'Teen' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'WiiU' and genre == 'Party Game' and rating == 'Everyone' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Party Game' AND WiiU = 'TRUE' AND ESRB = 'Teen' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Party Game' AND WiiU = 'TRUE' AND ESRB = 'Teen'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    elif platform == 'WiiU' and genre == 'Party Game' and rating == 'Mature':
+                        if platform == 'WiiU' and genre == 'Party Game' and rating == 'Mature' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Party Game' AND WiiU = 'TRUE' AND ESRB = 'Mature' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'WiiU' and genre == 'Party Game' and rating == 'Mature' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Party Game' AND WiiU = 'TRUE' AND ESRB = 'Mature' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Party Game' AND WiiU = 'TRUE' AND ESRB = 'Mature'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    else:
+                        itr = c.execute("SELECT * from games WHERE genre = 'Party Game' AND WiiU = 'TRUE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                elif platform == 'WiiU' and genre == 'Platformer':
+                    if platform == 'WiiU' and genre == 'Platformer' and rating == 'Everyone':
+                        if platform == 'WiiU' and genre == 'Platformer' and rating == 'Everyone' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Platformer' AND WiiU = 'TRUE' AND ESRB = 'Everyone' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'WiiU' and genre == 'Platformer' and rating == 'Everyone' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Platformer' AND WiiU = 'TRUE' AND ESRB = 'Everyone' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Platformer' AND WiiU = 'TRUE' AND ESRB = 'Everyone'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    elif platform == 'WiiU' and genre == 'Platformer' and rating == 'Teen':
+                        if platform == 'WiiU' and genre == 'Platformer' and rating == 'Teen' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Platformer' AND WiiU = 'TRUE' AND ESRB = 'Teen' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'WiiU' and genre == 'Platformer' and rating == 'Teen' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Platformer' AND WiiU = 'TRUE' AND ESRB = 'Teen' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Platformer' AND WiiU = 'TRUE' AND ESRB = 'Teen'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    elif platform == 'WiiU' and genre == 'Platformer' and rating == 'Mature':
+                        if platform == 'WiiU' and genre == 'Platformer' and rating == 'Mature' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Platformer' AND WiiU = 'TRUE' AND ESRB = 'Mature' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'WiiU' and genre == 'Platformer' and rating == 'Everyone' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Platformer' AND WiiU = 'TRUE' AND ESRB = 'Mature' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Platformer' AND WiiU = 'TRUE' AND ESRB = 'Mature'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    else:
+                        itr = c.execute("SELECT * from games WHERE genre = 'Platformer' AND WiiU = 'TRUE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                elif platform == 'WiiU' and genre == 'Racing':
+                    if platform == 'WiiU' and genre == 'Racing' and rating == 'Everyone':
+                        if platform == 'WiiU' and genre == 'Racing' and rating == 'Everyone' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Racing' AND WiiU = 'TRUE' AND ESRB = 'Everyone' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'WiiU' and genre == 'Racing' and rating == 'Everyone' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Racing' AND WiiU = 'TRUE' AND ESRB = 'Everyone' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Racing' AND WiiU = 'TRUE' AND ESRB = 'Everyone'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    elif platform == 'WiiU' and genre == 'Racing' and rating == 'Teen':
+                        if platform == 'WiiU' and genre == 'Racing' and rating == 'Teen' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Racing' AND WiiU = 'TRUE' AND ESRB = 'Teen' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'WiiU' and genre == 'Racing' and rating == 'Teen' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Racing' AND WiiU = 'TRUE' AND ESRB = 'Teen' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Racing' AND WiiU = 'TRUE' AND ESRB = 'Teen'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    elif platform == 'WiiU' and genre == 'Racing' and rating == 'Mature':
+                        if platform == 'WiiU' and genre == 'Racing' and rating == 'Mature' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Racing' AND WiiU = 'TRUE' AND ESRB = 'Mature' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'WiiU' and genre == 'Racing' and rating == 'Mature' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Racing' AND WiiU = 'TRUE' AND ESRB = 'Mature' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Racing' AND WiiU = 'TRUE' AND ESRB = 'Mature'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    else:
+                        itr = c.execute("SELECT * from games WHERE genre = 'Racing' AND WiiU = 'TRUE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                elif platform == 'WiiU' and genre == 'Rhythm Game':
+                    if platform == 'WiiU' and genre == 'Rhythm Game' and rating == 'Everyone':
+                        if platform == 'WiiU' and genre == 'Rhythm Game' and rating == 'Everyone' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Rhythm Game' AND WiiU = 'TRUE' AND ESRB = 'Everyone' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'WiiU' and genre == 'Rhythm Game' and rating == 'Everyone' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Rhythm Game' AND WiiU = 'TRUE' AND ESRB = 'Everyone' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Rhythm Game' AND WiiU = 'TRUE' AND ESRB = 'Everyone'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    elif platform == 'WiiU' and genre == 'Rhythm Game' and rating == 'Teen':
+                        if platform == 'WiiU' and genre == 'Rhythm Game' and rating == 'Teen' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Rhythm Game' AND WiiU = 'TRUE' AND ESRB = 'Teen' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'WiiU' and genre == 'Rhythm Game' and rating == 'Teen' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Rhythm Game' AND WiiU = 'TRUE' AND ESRB = 'Teen' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Rhythm Game' AND WiiU = 'TRUE' AND ESRB = 'Teen'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    elif platform == 'WiiU' and genre == 'Rhythm Game' and rating == 'Mature':
+                        if platform == 'WiiU' and genre == 'Rhythm Game' and rating == 'Mature' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Rhythm Game' AND WiiU = 'TRUE' AND ESRB = 'Mature' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'WiiU' and genre == 'Rhythm Game' and rating == 'Mature' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Rhythm Game' AND WiiU = 'TRUE' AND ESRB = 'Mature' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Rhythm Game' AND WiiU = 'TRUE' AND ESRB = 'Mature'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    else:
+                        itr = c.execute("SELECT * from games WHERE genre = 'Rhythm Game' AND WiiU = 'TRUE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                else :
+                    itr = c.execute("SELECT DISTINCT * FROM games WHERE WiiU = 'TRUE'").fetchall()
                     for x in itr:
                         if x not in L:
                             L.append(x)
                             
+#######################################################################################################################################
+#######################################################################################################################################
+            elif pc == 'True':
+                if platform == 'Windows' and genre == 'Action-Adventure':
+                    if platform == 'Windows' and genre == 'Action-Adventure' and rating == 'Everyone':
+                        if platform == 'Windows' and genre == 'Action Adventure' and rating == 'Everyone' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Action-Adventure' AND Windows = 'TRUE' AND ESRB = 'Everyone' AND multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)  
+                        elif platform == 'Windows' and genre == 'Action Adventure' and rating == 'Everyone' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Action-Adventure' AND Windows = 'TRUE' AND ESRB = 'Everyone' AND multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Action-Adventure' AND Windows = 'TRUE' AND ESRB = 'Everyone'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    elif platform == 'Windows' and genre == 'Action-Adventure' and rating == 'Teen':
+                        if platform == 'Windows' and genre == 'Action-Adventure' and rating == 'Teen' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Action-Adventure' AND Windows = 'TRUE' AND ESRB = 'Teen' AND multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'Windows' and genre == 'Action-Adventure' and rating == 'Teen' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Action-Adventure' AND Windows = 'TRUE' AND ESRB = 'Teen' AND multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Action-Adventure' AND Windows = 'TRUE' AND ESRB = 'Teen'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    elif platform == 'Windows' and genre == 'Action-Adventure' and rating == 'Mature':
+                        if platform == 'Windows' and genre == 'Action-Adventure' and rating == 'Mature' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Action-Adventure' AND Windows = 'TRUE' AND ESRB = 'Mature' AND multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'Windows' and genre == 'Action-Adventure' and rating == 'Mature' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Action-Adventure' and Windows = 'TRUE' AND ESRB = 'Mature' AND multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Action-Adventure' AND Windows = 'TRUE' AND ESRB = 'Mature'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    else:
+                        itr = c.execute("SELECT * from games WHERE genre = 'Action-Adventure' AND Windows = 'TRUE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                elif platform == 'Windows' and genre == 'Fighting':
+                    if platform == 'Windows' and genre == 'Fighting' and rating == 'Everyone':
+                        if platform == 'Windows' and genre == 'Fighting' and rating == 'Everyone' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Fighting' AND Windows = 'TRUE' AND ESRB = 'Everyone' AND multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'Windows' and genre == 'Fighting' and rating == 'Everyone' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Fighting' AND Windows = 'TRUE' AND ESRB = 'Everyone' AND multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Fighting' AND Windows = 'TRUE' AND ESRB = 'Everyone'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    elif platform == 'Windows' and genre == 'Fighting' and rating == 'Teen':
+                        if platform == 'Windows' and genre == 'Fighting' and rating == 'Teen' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Fighting' AND Windows = 'TRUE' AND ESRB = 'Teen' AND multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'Windows' and genre == 'Fighting' and rating == 'Teen' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Fighting' AND Windows = 'TRUE' AND ESRB = 'Teen' AND multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Fighting' AND Windows = 'TRUE' AND ESRB = 'Teen'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    elif platform == 'Windows' and genre == 'Fighting' and rating == 'Mature':
+                        if platform == 'Windows' and genre == 'Fighting' and rating == 'Mature' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Fighting' AND Windows = 'TRUE' AND ESRB = 'Mature' AND multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'Windows' and genre == 'Fighting' and rating == 'Mature' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Fighting' AND Windows = 'TRUE' AND ESRB = 'Mature' AND multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Fighting' AND Windows = 'TRUE' AND ESRB = 'Mature'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    else:
+                        itr = c.execute("SELECT * from games WHERE genre = 'Fighting' AND Windows = 'TRUE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                elif platform == 'Windows' and genre == 'Role-Playing':
+                    if platform == 'Windows' and genre == 'Role-Playing' and rating == 'Everyone':
+                        if platform == 'Windows' and genre == 'Role-Playing' and rating == 'Everyone' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Role-Playing' AND Windows = 'TRUE' and ESRB = 'Everyone' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'Windows' and genre == 'Role-Playing' and rating == 'Everyone' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Role-Playing' AND Windows = 'TRUE' and ESRB = 'Everyone' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:    
+                            itr = c.execute("SELECT * from games WHERE genre = 'Role-Playing' AND Windows = 'TRUE' AND ESRB = 'Everyone'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    elif platform == 'Windows' and genre == 'Role-Playing' and rating == 'Teen':
+                        if platform == 'Windows' and genre == 'Role-Playing' and rating == 'Teen' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Role-Playing' AND Windows = 'TRUE' and ESRB = 'Teen' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'Windows' and genre == 'Role-Playing' and rating == 'Teen' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Role-Playing' AND Windows = 'TRUE' and ESRB = 'Teen' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Role-Playing' AND Windows = 'TRUE' AND ESRB = 'Teen'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    elif platform == 'Windows' and genre == 'Role-Playing' and rating == 'Mature':
+                        if platform == 'Windows' and genre == 'Role-Playing' and rating == 'Mature' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Role-Playing' AND Windows = 'TRUE' and ESRB = 'Mature' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'Windows' and genre == 'Role-Playing' and rating == 'Mature' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Role-Playing' AND Windows = 'TRUE' and ESRB = 'Mature' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Role-Playing' AND Windows = 'TRUE' AND ESRB = 'Mature'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    else:
+                        itr = c.execute("SELECT * from games WHERE genre = 'Role-Playing' AND Windows = 'TRUE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                elif platform == 'Windows' and genre == 'Shooter':
+                    if platform == 'Windows' and genre == 'Shooter' and rating == 'Everyone':
+                        if platform == 'Windows' and genre == 'Shooter' and rating == 'Everyone' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games where genre = 'Shooter' and Windows = 'TRUE' and ESRB = 'Everyone' AND multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'Windows' and genre == 'Shooter' and rating == 'Everyone' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games where genre = 'Shooter' and Windows = 'TRUE' and ESRB = 'Everyone' AND multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Shooter' AND Windows = 'TRUE' AND ESRB = 'Everyone'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    elif platform == 'Windows' and genre == 'Shooter' and rating == 'Teen':
+                        if platform == 'Windows' and genre == 'Shooter' and rating == 'Teen' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games where genre = 'Shooter' and Windows = 'TRUE' and ESRB = 'Teen' AND multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'Windows' and genre == 'Shooter' and rating == 'Teen' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games where genre = 'Shooter' and Windows = 'TRUE' and ESRB = 'Teen' AND multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:            
+                            itr = c.execute("SELECT * from games WHERE genre = 'Shooter' AND Windows = 'TRUE' AND ESRB = 'Teen'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    elif platform == 'Windows' and genre == 'Shooter' and rating == 'Mature':
+                        if platform == 'Windows' and genre == 'Shooter' and rating == 'Mature' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games where genre = 'Shooter' and Windows = 'TRUE' and ESRB = 'Mature' AND multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'Windows' and genre == 'Shooter' and rating == 'Mature' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games where genre = 'Shooter' and Windows = 'TRUE' and ESRB = 'Mature' AND multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Shooter' AND Windows = 'TRUE' AND ESRB = 'Mature'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    else:
+                        itr = c.execute("SELECT * from games WHERE genre = 'Shooter' AND Windows = 'TRUE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                elif platform == 'Windows' and genre == 'Survival Horror':
+                    if platform == 'Windows' and genre == 'Survival Horror' and rating == 'Everyone':
+                        if platform == 'Windows' and genre == 'Survival Horror' and rating == 'Everyone' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Survival Horror' AND Windows = 'TRUE' AND ESRB = 'Everyone' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'Windows' and genre == 'Survival Horror' and rating == 'Everyone' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Survival Horror' AND Windows = 'TRUE' AND ESRB = 'Everyone' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:    
+                            itr = c.execute("SELECT * from games WHERE genre = 'Survival Horror' AND Windows = 'TRUE' AND ESRB = 'Everyone'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    elif platform == 'Windows' and genre == 'Survival Horror' and rating == 'Teen':
+                        if platform == 'Windows' and genre == 'Survival Horror' and rating == 'Teen' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Survival Horror' AND Windows = 'TRUE' AND ESRB = 'Teen' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'Windows' and genre == 'Survival Horror' and rating == 'Teen' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Survival Horror' AND Windows = 'TRUE' AND ESRB = 'Teen' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Survival Horror' AND Windows = 'TRUE' AND ESRB = 'Teen'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    elif platform == 'Windows' and genre == 'Survival Horror' and rating == 'Mature':
+                        if platform == 'Windows' and genre == 'Survival Horror' and rating == 'Mature' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Survival Horror' AND Windows = 'TRUE' AND ESRB = 'Mature' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'Windows' and genre == 'Survival Horror' and rating == 'Mature' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Survival Horror' AND Windows = 'TRUE' AND ESRB = 'Mature' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Survival Horror' AND Windows = 'TRUE' AND ESRB = 'Mature'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    else:
+                        itr = c.execute("SELECT * from games WHERE genre = 'Survival Horror' AND Windows = 'TRUE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                elif platform == 'Windows' and genre == 'Party Game':
+                    if platform == 'Windows' and genre == 'Party Game' and rating == 'Everyone':
+                        if platform == 'Windows' and genre == 'Party Game' and rating == 'Everyone' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Party Game' AND Windows = 'TRUE' AND ESRB = 'Everyone' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'Windows' and genre == 'Party Game' and rating == 'Everyone' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Party Game' AND Windows = 'TRUE' AND ESRB = 'Everyone' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Party Game' AND Windows = 'TRUE' AND ESRB = 'Everyone'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    elif platform == 'Windows' and genre == 'Party Game' and rating == 'Teen':
+                        if platform == 'Windows' and genre == 'Party Game' and rating == 'Teen' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Party Game' AND Windows = 'TRUE' AND ESRB = 'Teen' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'Windows' and genre == 'Party Game' and rating == 'Everyone' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Party Game' AND Windows = 'TRUE' AND ESRB = 'Teen' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Party Game' AND Windows = 'TRUE' AND ESRB = 'Teen'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    elif platform == 'Windows' and genre == 'Party Game' and rating == 'Mature':
+                        if platform == 'Windows' and genre == 'Party Game' and rating == 'Mature' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Party Game' AND Windows = 'TRUE' AND ESRB = 'Mature' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'Windows' and genre == 'Party Game' and rating == 'Mature' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Party Game' AND Windows = 'TRUE' AND ESRB = 'Mature' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Party Game' AND Windows = 'TRUE' AND ESRB = 'Mature'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    else:
+                        itr = c.execute("SELECT * from games WHERE genre = 'Party Game' AND Windows = 'TRUE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                elif platform == 'Windows' and genre == 'Platformer':
+                    if platform == 'Windows' and genre == 'Platformer' and rating == 'Everyone':
+                        if platform == 'Windows' and genre == 'Platformer' and rating == 'Everyone' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Platformer' AND Windows = 'TRUE' AND ESRB = 'Everyone' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'Windows' and genre == 'Platformer' and rating == 'Everyone' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Platformer' AND Windows = 'TRUE' AND ESRB = 'Everyone' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Platformer' AND Windows = 'TRUE' AND ESRB = 'Everyone'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    elif platform == 'Windows' and genre == 'Platformer' and rating == 'Teen':
+                        if platform == 'Windows' and genre == 'Platformer' and rating == 'Teen' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Platformer' AND Windows = 'TRUE' AND ESRB = 'Teen' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'Windows' and genre == 'Platformer' and rating == 'Teen' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Platformer' AND Windows = 'TRUE' AND ESRB = 'Teen' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Platformer' AND Windows = 'TRUE' AND ESRB = 'Teen'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    elif platform == 'Windows' and genre == 'Platformer' and rating == 'Mature':
+                        if platform == 'Windows' and genre == 'Platformer' and rating == 'Mature' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Platformer' AND Windows = 'TRUE' AND ESRB = 'Mature' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'Windows' and genre == 'Platformer' and rating == 'Everyone' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Platformer' AND Windows = 'TRUE' AND ESRB = 'Mature' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Platformer' AND Windows = 'TRUE' AND ESRB = 'Mature'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    else:
+                        itr = c.execute("SELECT * from games WHERE genre = 'Platformer' AND Windows = 'TRUE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                elif platform == 'Windows' and genre == 'Racing':
+                    if platform == 'Windows' and genre == 'Racing' and rating == 'Everyone':
+                        if platform == 'Windows' and genre == 'Racing' and rating == 'Everyone' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Racing' AND Windows = 'TRUE' AND ESRB = 'Everyone' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'Windows' and genre == 'Racing' and rating == 'Everyone' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Racing' AND Windows = 'TRUE' AND ESRB = 'Everyone' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Racing' AND Windows = 'TRUE' AND ESRB = 'Everyone'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    elif platform == 'Windows' and genre == 'Racing' and rating == 'Teen':
+                        if platform == 'Windows' and genre == 'Racing' and rating == 'Teen' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Racing' AND Windows = 'TRUE' AND ESRB = 'Teen' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'Windows' and genre == 'Racing' and rating == 'Teen' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Racing' AND Windows = 'TRUE' AND ESRB = 'Teen' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Racing' AND Windows = 'TRUE' AND ESRB = 'Teen'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    elif platform == 'Windows' and genre == 'Racing' and rating == 'Mature':
+                        if platform == 'Windows' and genre == 'Racing' and rating == 'Mature' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Racing' AND Windows = 'TRUE' AND ESRB = 'Mature' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'Windows' and genre == 'Racing' and rating == 'Mature' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Racing' AND Windows = 'TRUE' AND ESRB = 'Mature' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Racing' AND Windows = 'TRUE' AND ESRB = 'Mature'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    else:
+                        itr = c.execute("SELECT * from games WHERE genre = 'Racing' AND Windows = 'TRUE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                elif platform == 'Windows' and genre == 'Rhythm Game':
+                    if platform == 'Windows' and genre == 'Rhythm Game' and rating == 'Everyone':
+                        if platform == 'Windows' and genre == 'Rhythm Game' and rating == 'Everyone' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Rhythm Game' AND Windows = 'TRUE' AND ESRB = 'Everyone' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'Windows' and genre == 'Rhythm Game' and rating == 'Everyone' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Rhythm Game' AND Windows = 'TRUE' AND ESRB = 'Everyone' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Rhythm Game' AND Windows = 'TRUE' AND ESRB = 'Everyone'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    elif platform == 'Windows' and genre == 'Rhythm Game' and rating == 'Teen':
+                        if platform == 'Windows' and genre == 'Rhythm Game' and rating == 'Teen' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Rhythm Game' AND Windows = 'TRUE' AND ESRB = 'Teen' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'Windows' and genre == 'Rhythm Game' and rating == 'Teen' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Rhythm Game' AND Windows = 'TRUE' AND ESRB = 'Teen' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Rhythm Game' AND Windows = 'TRUE' AND ESRB = 'Teen'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    elif platform == 'Windows' and genre == 'Rhythm Game' and rating == 'Mature':
+                        if platform == 'Windows' and genre == 'Rhythm Game' and rating == 'Mature' and multiplayer == 'TRUE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Rhythm Game' AND Windows = 'TRUE' AND ESRB = 'Mature' and multiplayer = 'TRUE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        elif platform == 'Windows' and genre == 'Rhythm Game' and rating == 'Mature' and multiplayer == 'FALSE':
+                            itr = c.execute("SELECT * from games WHERE genre = 'Rhythm Game' AND Windows = 'TRUE' AND ESRB = 'Mature' and multiplayer = 'FALSE'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                        else:
+                            itr = c.execute("SELECT * from games WHERE genre = 'Rhythm Game' AND Windows = 'TRUE' AND ESRB = 'Mature'").fetchall()
+                            for x in itr:
+                                if x not in L:
+                                    L.append(x)
+                    else:
+                        itr = c.execute("SELECT * from games WHERE genre = 'Rhythm Game' AND Windows = 'TRUE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                else :
+                    itr = c.execute("SELECT DISTINCT * FROM games WHERE Windows = 'TRUE'").fetchall()
+                    for x in itr:
+                        if x not in L:
+                            L.append(x)
+####################################################################################################################################
+####################################################################################################################################    
+                    
+            elif egenre == 'True':
+                if genre == 'Action-Adventure' and rating == 'Everyone':
+                    if genre == 'Action-Adventure' and rating == 'Everyone' and multiplayer == 'TRUE':
+                        itr = c.execute("SELECT * from games where genre = 'Action-Adventure' and ESRB = 'Everyone' and multiplayer = 'TRUE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                    elif genre == 'Action-Adventure' and rating == 'Everyone' and multiplayer == 'FALSE':
+                        itr = c.execute("SELECT * from games where genre = 'Action-Adventure' and ESRB = 'Everyone' and multiplayer = 'FALSE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                    else:
+                        itr = c.execute("SELECT * from games where genre = 'Action-Adventure' and ESRB = 'Everyone'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                elif genre == 'Action-Adventure' and rating == 'Teen':
+                    if genre == 'Action-Adventure' and rating == 'Teen' and multiplayer == 'TRUE':
+                        itr = c.execute("SELECT * from games where genre = 'Action-Adventure' and ESRB = 'Teen' and multiplayer = 'TRUE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                    elif genre == 'Action-Adventure' and rating == 'Teen' and multiplayer == 'FALSE':
+                        itr = c.execute("SELECT * from games where genre = 'Action-Adventure' and ESRB = 'Teen' and multiplayer = 'FALSE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                    else: 
+                        itr = c.execute("SELECT * from games where genre = 'Action-Adventure' and ESRB = 'Teen'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                elif genre == 'Action-Adventure' and rating == 'Mature':
+                    if genre == 'Action-Adventure' and rating == 'Mature' and multiplayer == 'TRUE':
+                        itr = c.execute("SELECT * from games where genre = 'Action-Adventure' and ESRB = 'Mature' and multiplayer = 'TRUE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                    elif genre == 'Action-Adventure' and rating == 'Mature' and multiplayer == 'FALSE':
+                        itr = c.execute("SELECT * from games where genre = 'Action-Adventure' and ESRB = 'Mature' and multiplayer = 'FALSE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                    else:
+                        itr = c.execute("SELECT * from games where genre = 'Action-Adventure' and ESRB = 'Mature'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                elif genre == 'Fighting' and rating == 'Everyone':
+                    if genre == 'Fighting' and rating == 'Everyone' and multiplayer == 'TRUE':
+                        itr = c.execute("SELECT * from games where genre = 'Fighting' and ESRB = 'Everyone' and multiplayer = 'TRUE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                    elif genre == 'Fighting' and rating == 'Everyone' and multiplayer == 'FALSE':
+                        itr = c.execute("SELECT * from games where genre = 'Fighting' and ESRB = 'Everyone' and multiplayer = 'FALSE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                    else:
+                        itr = c.execute("SELECT * from games where genre = 'Fighting' and ESRB = 'Everyone'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                elif genre == 'Fighting' and rating == 'Teen':
+                    if genre == 'Fighting' and rating == 'Teen' and multiplayer == 'TRUE':
+                        itr = c.execute("SELECT * from games where genre = 'Fighting' and ESRB = 'Teen' and multiplayer = 'TRUE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                    elif genre == 'Fighting' and rating == 'Teen' and multiplayer == 'FALSE':
+                        itr = c.execute("SELECT * from games where genre = 'Fighting' and ESRB = 'Teen' and multiplayer = 'FALSE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                    else:
+                        itr = c.execute("SELECT * from games where genre = 'Fighting' and ESRB = 'Teen'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                elif genre == 'Fighting' and rating == 'Mature':
+                    if genre == 'Fighting' and rating == 'Mature' and multiplayer == 'TRUE':
+                        itr = c.execute("SELECT * from games where genre = 'Fighting' and ESRB = 'Mature' and multiplayer = 'TRUE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                    elif genre == 'Fighting' and rating == 'Mature' and multiplayer == 'FALSE':
+                        itr = c.execute("SELECT * from games where genre = 'Fighting' and ESRB = 'Mature' and multiplayer = 'FALSE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                    else:
+                        itr = c.execute("SELECT * from games where genre = 'Fighting' and ESRB = 'Mature'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                elif genre == 'Shooter' and rating == 'Everyone':
+                    if genre == 'Shooter' and rating == 'Everyone' and multiplayer == 'TRUE':
+                        itr = c.execute("SELECT * from games where genre = 'Shooter' and ESRB = 'Everyone' and multiplayer = 'TRUE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                    elif genre == 'Shooter' and rating == 'Everyone' and multiplayer == 'FALSE':
+                        itr = c.execute("SELECT * from games where genre = 'Shooter' and ESRB = 'Everyone' and multiplayer = 'FALSE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                    else:
+                        itr = c.execute("SELECT * from games where genre = 'Shooter' and ESRB = 'Everyone'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                elif genre == 'Shooter' and rating == 'Teen':
+                    if genre == 'Shooter' and rating == 'Teen' and multiplayer == 'TRUE':
+                        itr = c.execute("SELECT * from games where genre = 'Shooter' and ESRB = 'Teen' and multiplayer = 'TRUE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                    elif genre == 'Shooter' and rating == 'Teen' and multiplayer == 'FALSE':
+                        itr = c.execute("SELECT * from games where genre = 'Shooter' and ESRB = 'Teen' and multiplayer = 'FALSE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                    else:
+                        itr = c.execute("SELECT * from games where genre = 'Shooter' and ESRB = 'Teen'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                elif genre == 'Shooter' and rating == 'Mature':
+                    if genre == 'Shooter' and rating == 'Mature' and multiplayer == 'TRUE':
+                        itr = c.execute("SELECT * from games where genre = 'Shooter' and ESRB = 'Mature' and multiplayer = 'TRUE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                    elif genre == 'Shooter' and rating == 'Mature' and multiplayer == 'FALSE':
+                        itr = c.execute("SELECT * from games where genre = 'Shooter' and ESRB = 'Mature' and multiplayer = 'FALSE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                    else:
+                        itr = c.execute("SELECT * from games where genre = 'Shooter' and ESRB = 'Mature'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                elif genre == 'Party Game' and rating == 'Everyone':
+                    if genre == 'Party Game' and rating == 'Everyone' and multiplayer == 'TRUE':
+                        itr = c.execute("SELECT * from games where genre = 'Party Game' and ESRB = 'Everyone' and multiplayer = 'TRUE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                    elif genre == 'Party Game' and rating == 'Everyone' and multiplayer == 'FALSE':
+                        itr = c.execute("SELECT * from games where genre = 'Party Game' and ESRB = 'Everyone' and multiplayer = 'FALSE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                    else:
+                        itr = c.execute("SELECT * from games where genre = 'Party Game' and ESRB = 'Everyone'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                elif genre == 'Party Game' and rating == 'Teen':
+                    if genre == 'Party Game' and rating == 'Teen' and multiplayer == 'TRUE':
+                        itr = c.execute("SELECT * from games where genre = 'Party Game' and ESRB = 'Teen' and multiplayer = 'TRUE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                    elif genre == 'Party Game' and rating == 'Teen' and multiplayer == 'FALSE':
+                        itr = c.execute("SELECT * from games where genre = 'Party Game' and ESRB = 'Teen' and multiplayer = 'FALSE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                    else:
+                        itr = c.execute("SELECT * from games where genre = 'Party Game' and ESRB = 'Teen'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                elif genre == 'Party Game' and rating == 'Mature':
+                    if genre == 'Party Game' and rating == 'Mature' and multiplayer == 'TRUE':
+                        itr = c.execute("SELECT * from games where genre = 'Party Game' and ESRB = 'Mature' and multiplayer = 'TRUE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                    elif genre == 'Party Game' and rating == 'Mature' and multiplayer == 'FALSE':
+                        itr = c.execute("SELECT * from games where genre = 'Party Game' and ESRB = 'Mature' and multiplayer = 'FALSE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                    else:
+                        itr = c.execute("SELECT * from games where genre = 'Party Game' and ESRB = 'Mature'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                elif genre == 'Platformer' and rating == 'Everyone':
+                    if genre == 'Platformer' and rating == 'Everyone' and multiplayer == 'TRUE':
+                        itr = c.execute("SELECT * from games where genre = 'Platformer' and ESRB = 'Everyone' and multiplayer = 'TRUE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                    elif genre == 'Platformer' and rating == 'Everyone' and multiplayer == 'FALSE':
+                        itr = c.execute("SELECT * from games where genre = 'Platformer' and ESRB = 'Everyone' and multiplayer = 'FALSE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                    else:
+                        itr = c.execute("SELECT * from games where genre = 'Platformer' and ESRB = 'Everyone'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                elif genre == 'Platformer' and rating == 'Teen':
+                    if genre == 'Platformer' and rating == 'Teen' and multiplayer == 'TRUE':
+                        itr = c.execute("SELECT * from games where genre = 'Platformer' and ESRB = 'Teen' and multiplayer = 'TRUE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                    elif genre == 'Platformer' and rating == 'Teen' and multiplayer == 'FALSE':
+                        itr = c.execute("SELECT * from games where genre = 'Platformer' and ESRB = 'Teen' and multiplayer = 'FALSE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                    else:
+                        itr = c.execute("SELECT * from games where genre = 'Platformer' and ESRB = 'Teen'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                elif genre == 'Platformer' and rating == 'Mature':
+                    if genre == 'Platformer' and rating == 'Mature' and multiplayer == 'TRUE':
+                        itr = c.execute("SELECT * from games where genre = 'Platformer' and ESRB = 'Mature' and multiplayer = 'TRUE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                    elif genre == 'Platformer' and rating == 'Mature' and multiplayer == 'FALSE':
+                        itr = c.execute("SELECT * from games where genre = 'Platformer' and ESRB = 'Mature' and multiplayer = 'FALSE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                    else:
+                        itr = c.execute("SELECT * from games where genre = 'Platformer' and ESRB = 'Mature'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                elif genre == 'Racing' and rating == 'Everyone':
+                    if genre == 'Racing' and rating == 'Everyone' and multiplayer == 'TRUE':
+                        itr = c.execute("SELECT * from games where genre = 'Racing' and ESRB = 'Everyone' and multiplayer = 'TRUE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                    elif genre == 'Racing' and rating == 'Everyone' and multiplayer == 'FALSE':
+                        itr = c.execute("SELECT * from games where genre = 'Racing' and ESRB = 'Everyone' and multiplayer = 'FALSE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                    else:
+                        itr = c.execute("SELECT * from games where genre = 'Racing' and ESRB = 'Everyone'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                elif genre == 'Racing' and rating == 'Teen':
+                    if genre == 'Racing' and rating == 'Teen' and multiplayer == 'TRUE':
+                        itr = c.execute("SELECT * from games where genre = 'Racing' and ESRB = 'Teen' and multiplayer = 'TRUE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                    elif genre == 'Racing' and rating == 'Teen' and multiplayer == 'FALSE':
+                        itr = c.execute("SELECT * from games where genre = 'Racing' and ESRB = 'Teen' and multiplayer = 'FALSE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                    else:
+                        itr = c.execute("SELECT * from games where genre = 'Racing' and ESRB = 'Teen'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                elif genre == 'Racing' and rating == 'Mature':
+                    if genre == 'Racing' and rating == 'Mature' and multiplayer == 'TRUE':
+                        itr = c.execute("SELECT * from games where genre = 'Racing' and ESRB = 'Mature' and multiplayer = 'TRUE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                    elif genre == 'Racing' and rating == 'Mature' and multiplayer == 'FALSE':
+                        itr = c.execute("SELECT * from games where genre = 'Racing' and ESRB = 'Mature' and multiplayer = 'FALSE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                    else:
+                        itr = c.execute("SELECT * from games where genre = 'Racing' and ESRB = 'Mature'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                elif genre == 'Rhythm Game' and rating == 'Everyone':
+                    if genre == 'Rhythm Game' and rating == 'Everyone' and multiplayer == 'TRUE':
+                        itr = c.execute("SELECT * from games where genre = 'Rhythm Game' and ESRB = 'Everyone' and multiplayer = 'TRUE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                    elif genre == 'Rhythm Game' and rating == 'Everyone' and multiplayer == 'FALSE':
+                        itr = c.execute("SELECT * from games where genre = 'Rhythm Game' and ESRB = 'Everyone' and multiplayer = 'FALSE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                    else:
+                        itr = c.execute("SELECT * from games where genre = 'Rhythm Game' and ESRB = 'Everyone'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                elif genre == 'Rhythm Game' and rating == 'Teen':
+                    if genre == 'Rhythm Game' and rating == 'Teen' and multiplayer == 'TRUE':
+                        itr = c.execute("SELECT * from games where genre = 'Rhythm Game' and ESRB = 'Teen' and multiplayer = 'TRUE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                    elif genre == 'Rhythm Game' and rating == 'Teen' and multiplayer == 'FALSE':
+                        itr = c.execute("SELECT * from games where genre = 'Rhythm Game' and ESRB = 'Teen' and multiplayer = 'FALSE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                    else:
+                        itr = c.execute("SELECT * from games where genre = 'Rhythm Game' and ESRB = 'Teen'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                elif genre == 'Rhythm Game' and rating == 'Mature':
+                    if genre == 'Rhythm Game' and rating == 'Mature' and multiplayer == 'TRUE':
+                        itr = c.execute("SELECT * from games where genre = 'Rhythm Game' and ESRB = 'Mature' and multiplayer = 'TRUE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                    elif genre == 'Rhythm Game' and rating == 'Mature' and multiplayer == 'FALSE':
+                        itr = c.execute("SELECT * from games where genre = 'Rhythm Game' and ESRB = 'Mature' and multiplayer = 'FALSE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                    else:
                         
+                        itr = c.execute("SELECT * from games where genre = 'Rhythm Game' and ESRB = 'Mature'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                elif genre == 'Role-Playing' and rating == 'Everyone':
+                    if genre == 'Role-Playing' and rating == 'Everyone' and multiplayer == 'TRUE':
+                        itr = c.execute("SELECT * from games where genre = 'Role-Playing' and ESRB = 'Everyone' and multiplayer = 'TRUE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                    elif genre == 'Role-Playing' and rating == 'Everyone' and multiplayer == 'FALSE':
+                        itr = c.execute("SELECT * from games where genre = 'Role-Playing' and ESRB = 'Everyone' and multiplayer = 'FALSE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                    else:
+                        itr = c.execute("SELECT * from games where genre = 'Role-Playing' and ESRB = 'Everyone'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                elif genre == 'Role-Playing' and rating == 'Teen':
+                    if genre == 'Role-Playing' and rating == 'Teen' and multiplayer == 'TRUE':
+                        itr = c.execute("SELECT * from games where genre = 'Role-Playing' and ESRB = 'Teen' and multiplayer = 'TRUE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                    elif genre == 'Role-Playing' and rating == 'Teen' and multiplayer == 'FALSE':
+                        itr = c.execute("SELECT * from games where genre = 'Role-Playing' and ESRB = 'Teen' and multiplayer = 'FALSE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                    else:
+                        itr = c.execute("SELECT * from games where genre = 'Role-Playing' and ESRB = 'Teen'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                elif genre == 'Role-Playing' and rating == 'Mature':
+                    if genre == 'Role-Playing' and rating == 'Mature' and multiplayer == 'TRUE':
+                        itr = c.execute("SELECT * from games where genre = 'Role-Playing' and ESRB = 'Mature' and multiplayer = 'TRUE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                    elif genre == 'Role-Playing' and rating == 'Mature' and multiplayer == 'FALSE':
+                        itr = c.execute("SELECT * from games where genre = 'Role-Playing' and ESRB = 'Mature' and multiplayer = 'FALSE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                    else:
+                        itr = c.execute("SELECT * from games where genre = 'Role-Playing' and ESRB = 'Mature'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                elif genre == 'Survival Horror' and rating == 'Everyone':
+                    if genre == 'Survival Horror' and rating == 'Everyone' and multiplayer == 'TRUE':
+                        itr = c.execute("SELECT * from games where genre = 'Survival Horror' and ESRB = 'Everyone' and multiplayer = 'TRUE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                    elif genre == 'Survival Horror' and rating == 'Everyone' and multiplayer == 'FALSE':
+                        itr = c.execute("SELECT * from games where genre = 'Survival Horror' and ESRB = 'Everyone' and multiplayer = 'FALSE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                    else:            
+                        itr = c.execute("SELECT * from games where genre = 'Survival Horror' and ESRB = 'Everyone'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                elif genre == 'Survival Horror' and rating == 'Teen':
+                    if genre == 'Survival Horror' and rating == 'Teen' and multiplayer == 'TRUE':
+                        itr = c.execute("SELECT * from games where genre = 'Survival Horror' and ESRB = 'Teen' and multiplayer = 'TRUE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                    elif genre == 'Survival Horror' and rating == 'Teen' and multiplayer == 'FALSE':
+                        itr = c.execute("SELECT * from games where genre = 'Survival Horror' and ESRB = 'Teen' and multiplayer = 'FALSE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                    else:
+                        itr = c.execute("SELECT * from games where genre = 'Survival Horror' and ESRB = 'Teen'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                elif genre == 'Survival Horror' and rating == 'Mature':
+                    if genre == 'Survival Horror' and rating == 'Mature' and multiplayer == 'TRUE':
+                        itr = c.execute("SELECT * from games where genre = 'Survival Horror' and ESRB = 'Mature' and multiplayer = 'TRUE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                    elif genre == 'Survival Horror' and rating == 'Mature' and multiplayer == 'FALSE':
+                        itr = c.execute("SELECT * from games where genre = 'Survival Horror' and ESRB = 'Mature' and multiplayer = 'FALSE'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                    else:
+                        itr = c.execute("SELECT * from games where genre = 'Survival Horror' and ESRB = 'Mature'").fetchall()
+                        for x in itr:
+                            if x not in L:
+                                L.append(x)
+                else:
+                    itr = c.execute("SELECT DISTINCT * FROM games WHERE genre = ?", [genre]).fetchall()
+                    for x in itr:
+                        if x not in L:
+                            L.append(x)                
+                       
+                if rating == 'Everyone' and platform == 'Any' and genre == 'Any' and multiplayer == 'Any':
+                    itr = c.execute("SELECT * FROM games where ESRB = 'Everyone'").fetchall()
+                    for x in itr:
+                        if x not in L:
+                            L.append(x)
+                elif rating == 'Teen' and platform == 'Any' and genre == 'Any' and multiplayer == 'Any':
+                    itr = c.execute("SELECT * FROM games where ESRB = 'Teen'").fetchall()
+                    for x in itr:
+                        if x not in L:
+                            L.append(x)
+                elif rating == 'Mature' and platform == 'Any' and genre == 'Any' and multiplayer == 'Any':
+                    itr = c.execute("SELECT * FROM games where ESRB = 'Mature'").fetchall()
+                    for x in itr:
+                        if x not in L:
+                            L.append(x)
+                
+            '''               
+            elif multi == 'True':
+                itr = c.execute("SELECT DISTINCT * FROM games WHERE multiplayer = ?", [multiplayer]).fetchall()
+                    for x in itr:
+                        if x not in L:
+                            L.append(x)'''
+                                
+                            
             for x in L:
                 self.treeview.insert('', 0, values = x)
                 
