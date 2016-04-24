@@ -4,7 +4,7 @@ import sqlite3
 from Popup import *
 import Users
 import re
-from tkinter.ttk import Treeview
+
 
 db = sqlite3.connect("game nebula.db")
 c = db.cursor()
@@ -21,6 +21,7 @@ class DeleteFrame(Frame):
 
             self.master.title("Delete")
             self.pack(fill=BOTH, expand=True)
+            root.resizable(width=FALSE, height=FALSE)
 
             frame1 = Frame(self)
             frame1.pack(fill=X)
@@ -34,8 +35,6 @@ class DeleteFrame(Frame):
             frame5.pack(fill=X)
             frame6 = Frame(self)
             frame6.pack(fill=X)
-            frame7 = Frame(self)
-            frame7.pack(fill=X)
 
             self.info_label = Label(frame1, text="Please enter the username, game, or publisher to be deleted. \n Only ONE at a time!")
             self.info_label.pack(side=LEFT, padx=5, pady=14)
@@ -61,41 +60,6 @@ class DeleteFrame(Frame):
             self.backbtn = Button(frame5, text="Back", fg='black', command=self._back_btn_clicked)
             self.backbtn.pack(side=LEFT, pady=15)
 
-            gs = Treeview(frame6)
-            scrollbar = Scrollbar(frame6, orient='vertical', command=gs.yview)
-            gs.configure(yscroll=scrollbar.set)
-            gs['columns'] = ('name', 'genre', 'ESRB', 'publisher', 'release date', 'singleplayer', 'multiplayer', 'windows', 'ps4', 'xboxone', 'wiiu')
-            gs.heading("#0", text='', anchor='w')
-            gs.column("#0",width=0)
-            gs.heading('name', text='Name')
-            gs.column('name', anchor='w', width=80)
-            gs.heading('genre', text='Genre')
-            gs.column('genre', anchor='w', width=80)
-            gs.heading('ESRB', text='ESRB')
-            gs.column('ESRB', anchor='w', width=60)
-            gs.heading('publisher', text='Publisher')
-            gs.column('publisher', anchor='w', width=80)
-            gs.heading('release date', text='Release Date')
-            gs.column('release date', anchor='w', width=80)
-            gs.heading('singleplayer', text='Single Player')
-            gs.column('singleplayer', anchor='w', width=80)
-            gs.heading('multiplayer', text='Multiplayer')
-            gs.column('multiplayer', anchor='w', width=80)
-            gs.heading('windows', text='Windows')
-            gs.column('windows', anchor='w', width=60)
-            gs.heading('ps4', text='PS4')
-            gs.column('ps4', anchor='w', width=60)
-            gs.heading('xboxone', text='XBoxOne')
-            gs.column('xboxone', anchor='w', width=60)
-            gs.heading('wiiu', text='WiiU')
-            gs.column('wiiu', anchor='w', width=60)
-
-            gs.pack(side=LEFT, pady=10)
-            scrollbar.pack(side=LEFT, fill=Y)
-            self.treeview = gs
-            self.grid_rowconfigure(0, weight=1)
-            self.grid_columnconfigure(0, weight=1)
-
 
     def _delete_btn_clicked(self):
         username = self.username_entry.get()
@@ -115,6 +79,7 @@ class DeleteFrame(Frame):
             pu.onMoreThanOneDelete()
         else:
 
+
           if len(self.username_entry.get()) > 0:
             def CheckUserExists(username):
                 c.execute("SELECT name FROM UserData WHERE name=?", (username,))
@@ -126,11 +91,25 @@ class DeleteFrame(Frame):
 
             def _delete_user():
                 c.execute("DELETE FROM UserData Where name=?", (username,))
-                c.execute("DELETE FROM UserPref Where User=?", (username,))
+
+            def checkOwner(username):
+                c.execute("SELECT permission FROM UserData WHERE name=?", (username,))
+                (data,) = c.fetchone()
+                return data
+
 
             if CheckUserExists(username) == True:
-                _delete_user()
-                db.commit()
+                c.execute('SELECT name FROM UserData WHERE logged =1 AND name=?', (username,))
+                data = c.fetchone()
+                if not data:
+                    if checkOwner(username) == 2:
+                        pu.onDeleteOwner()
+                    else:
+                        _delete_user()
+                        db.commit()
+                        pu.onUserDeleted()
+                else:
+                    pu.onDeleteSelf()
             else:
                 pu.onUserNonExistent()
 
@@ -166,9 +145,10 @@ class DeleteFrame(Frame):
               def _delete_publisher():
                   c.execute("DELETE FROM publishers Where name=?", (publisher,))
 
-              if CheckPublisherExists(game) == True:
+              if CheckPublisherExists(publisher) == True:
                   _delete_publisher()
                   db.commit()
+                  pu.onPubDeleted()
               else:
                   pu.onPublisherNonExistent()
 
@@ -186,5 +166,5 @@ def on_closing():
 root.protocol("WM_DELETE_WINDOW", on_closing)
 ft = DeleteFrame(master=root)
 pu = Popup(parent=root)
-root.geometry("810x500+300+300")
+root.geometry("350x225+300+300")
 root.mainloop()
