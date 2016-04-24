@@ -20,13 +20,13 @@ class Popup(Frame):
         tm.showerror("Error", "Username or password is incorrect.")
 
     def onSpecialChar(self):
-        tm.showerror("Warning", "Username or password must not contain special characters (ex: * & $ @)")
+        tm.showwarning("Warning", "Username or password must not contain special characters (ex: * & $ @)")
 
     def onUserLength(self):
-        tm.showerror("Error", "Username must be 4-15 characters.")
+        tm.showwarning("Warning", "Username must be 4-15 characters.")
 
     def onPassLength(self):
-        tm.showerror("Error", "Password must be 4-15 characters.")
+        tm.showwarning("Warning", "Password must be 4-15 characters.")
 
     def onDelete(self):
         tm.askquestion("Question", "Are you sure you want to delete?")
@@ -44,7 +44,7 @@ class Popup(Frame):
         tm.showerror("Error", "Game doesn't exist")
 
     def onMoreThanOneDelete(self):
-        tm.showerror("Error", "Please only choose one item to delete at a time")
+        tm.showwarning("Warning", "Please only choose one item to delete at a time")
 
     def onPublisherNonExistent(self):
         tm.showerror("Error", "Publisher doesn't exist")
@@ -84,6 +84,59 @@ class Popup(Frame):
 
     def onOtherPub(self):
         tm.showinfo("Notice", "The game was added successfully, but the publisher must now be established.")
+
+    def onUserDeleted(self):
+        tm.showinfo("Notice", "User has successfully been deleted")
+
+    def onNoName(self):
+        tm.showwarning("Warning", "You must enter a game name to edit")
+
+    def onNothingUpdated(self):
+        tm.showwarning("Notice", "No attributes were different, so nothing was updated")
+
+    def onNothingInTable(self):
+        tm.showwarning("Notice", "Nothing was selected to be updated")
+
+    def onLogged(self):
+        tm.showinfo("Notice", "Successfully logged in!")
+
+    def onWrongLog(self):
+        tm.showerror("Error", "Incorrect username or password")
+
+    def onReg(self):
+        tm.showinfo("Success", "Registration Successfull! You may now log-in.")
+
+    def onPubDeleted(self):
+        tm.showinfo("Success", "Publisher Deleted")
+
+    def onNoUser(self):
+        tm.showwarning("Warning", "You must enter a username to edit")
+
+    def onBanned(self):
+        tm.showwarning("Warning", "You are banned, sorry! :)")
+
+    def onNoPub(self):
+        tm.showwarning("Warning", "You must enter a publisher to edit")
+
+    def onAdminLogged(self):
+        tm.showinfo("Success", "Successfully logged in, Welcome Admin!")
+
+    def onNoPermission(self):
+        tm.showerror("Error", "Only admins can access this feature!")
+
+    def onGameExists(self):
+        tm.showerror("Error", "Game already exists!")
+
+    def onDeleteSelf(self):
+        tm.showerror("Error", "You can't delete yourself!!")
+
+    def onDeleteOwner(self):
+        tm.showerror("Error", "Nice Try, you can't delete the owner!")
+
+    def onUpdateOwner(self):
+        tm.showerror("Error", "You can't update the owner's information!")
+
+
 
 def main():
 
