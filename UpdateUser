@@ -1,0 +1,204 @@
+from tkinter import *
+import tkinter.messagebox as tm
+import tkinter as tk
+import Users
+import re
+from tkinter import ttk
+import sqlite3
+from Popup import *
+from tkinter.ttk import Treeview
+
+
+db = sqlite3.connect('game nebula.db')
+c = db.cursor()
+
+
+
+class UpdateUserFrame(Frame):
+    def __init__(self, master):
+        Frame.__init__(self, master)
+
+        self.master = master
+        self.mainUI()
+
+    def mainUI(self):
+
+        self.master.title("Games Nebula")
+        self.pack(fill=BOTH, expand=True)
+        root.resizable(width=FALSE, height=FALSE)
+
+        frame1 = Frame(self)
+        frame1.pack(fill=X)
+        frame2 = Frame(self)
+        frame2.pack(fill=X)
+        frame3 = Frame(self)
+        frame3.pack(fill=X)
+        frame4 = Frame(self)
+        frame4.pack(fill=X)
+        frame5 = Frame(self)
+        frame5.pack(fill=X)
+        frame6 = Frame(self)
+        frame6.pack(fill=X)
+        frame7 = Frame(self)
+        frame7.pack(fill=X)
+
+        self.add_label = Label(frame1, text="Update a User  (Enter a Username, press 'Search for User', then enter the new info and press 'Update User)", fg='green', relief='groove', width='150')
+        self.add_label.pack(side=TOP, padx=5, pady=15)
+
+        self.user_label = Label(frame2, text="Username")
+        self.user_label.pack(side=LEFT, padx=5, pady=5)
+        self.user_entry = Entry(frame2, borderwidth=2)
+        self.user_entry.pack(side=LEFT)
+
+        self.pass_label = Label(frame2, text="New Password")
+        self.pass_label.pack(side=LEFT, padx=5, pady=10)
+        self.pass_entry = Entry(frame2, borderwidth=2)
+        self.pass_entry.pack(side=LEFT)
+
+        self.email_label = Label(frame3, text="Email")
+        self.email_label.pack(side=LEFT, padx=5, pady=10)
+        self.email_entry = Entry(frame3, borderwidth=2)
+        self.email_entry.pack(side=LEFT)
+
+        self.permission_label = Label(frame3, text="Permission", relief='groove')
+        self.permission_label.pack(side=LEFT, padx=15, pady=5)
+        self.permissionSpinBox = Spinbox(frame3, values=('0', '1'), width=8)
+        self.permissionSpinBox.pack(side=LEFT, pady=10)
+
+        self.banned_label = Label(frame3, text="Banned", relief='groove')
+        self.banned_label.pack(side=LEFT, padx=15, pady=5)
+        self.bannedSpinBox = Spinbox(frame3, values=('0', '1'), width=8)
+        self.bannedSpinBox.pack(side=LEFT, pady=10)
+
+        gs = Treeview(frame6)
+        scrollbar = Scrollbar(frame6, orient='vertical', command=gs.yview)
+        gs.configure(yscroll=scrollbar.set)
+        gs['columns'] = (
+            'name', 'password', 'email', 'permission', 'banned')
+        gs.heading("#0", text='', anchor='w')
+        gs.column("#0", width=0)
+        gs.heading('name', text='Name')
+        gs.column('name', anchor='n', width=60)
+        gs.heading('password', text='Password')
+        gs.column('password', anchor='n', width=100)
+        gs.heading('email', text='Email')
+        gs.column('email', anchor='n', width=150)
+        gs.heading('permission', text='Permission')
+        gs.column('permission', anchor='n', width=100)
+        gs.heading('banned', text='Banned')
+        gs.column('banned', anchor='n', width=100)
+
+        gs.pack(side=LEFT, pady=10)
+        scrollbar.pack(side=LEFT, fill=Y)
+        self.treeview = gs
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
+
+        self.addbtn = Button(frame7, text="Search for User", command=self._search_btn_clicked, fg='green', activebackground= 'green')
+        self.addbtn.pack(side=LEFT, padx=20, pady=20)
+        self.addbtn = Button(frame7, text="Update User", command=self._update_btn_clicked, fg='green', activebackground= 'green')
+        self.addbtn.pack(side=LEFT, padx=20, pady=20)
+
+
+
+    def _search_btn_clicked(self):
+        self.treeview.delete(*self.treeview.get_children())
+        username = self.user_entry.get()
+
+
+        def CheckUserExists(username):
+            c.execute("SELECT name FROM UserData WHERE name=?", (username,))
+            data = c.fetchall()
+            if not data:
+                return False
+            else:
+                return True
+
+        def checkPermission(username):
+            c.execute("SELECT permission FROM UserData WHERE name=?", (username,))
+            (data,) = c.fetchone()
+            return data
+
+        if len(username) == 0:
+            pu.onNoUser()
+        elif CheckUserExists(username) == True:
+            if checkPermission(username) == 2:
+                pu.onUpdateOwner()
+            else:
+                c.execute('SELECT * FROM UserData WHERE name =?', (username,))
+                result = c.fetchall()
+                for item in result:
+                    self.treeview.insert('', 0, values = item)
+        else:
+            pu.onUserNonExistent()
+
+
+
+    def _update_btn_clicked(self):
+
+        self.treeview.delete(*self.treeview.get_children())
+        username = self.user_entry.get()
+        password = self.pass_entry.get()
+        email = self.email_entry.get()
+
+        permission = self.permissionSpinBox.get()
+        banned = self.bannedSpinBox.get()
+
+        def CheckUserExists(username):
+            c.execute("SELECT name FROM UserData WHERE name=?", (username,))
+            data = c.fetchall()
+            if not data:
+                return False
+            else:
+                return True
+
+        def CheckNothingChanged(username):
+            c.execute("SELECT password FROM UserData WHERE name=?", (username,))
+            data = c.fetchall()
+            if data == "'[('"+password+"',)]":
+                return True
+            else:
+                return False
+
+        def checkPermission(username):
+            c.execute("SELECT permission FROM UserData WHERE name=?", (username,))
+            (data,) = c.fetchone()
+            return data
+
+
+        if CheckUserExists(username) == True:
+            if checkPermission(username) == 2:
+                pu.onUpdateOwner()
+            else:
+                if CheckNothingChanged(username) == True:
+                    pu.onNothingUpdated()
+                else:
+                    c.execute('UPDATE UserData SET password = ? WHERE name =?', (password, username))
+                    db.commit()
+
+                    c.execute('UPDATE UserData SET email = ? WHERE name =?', (email, username))
+                    db.commit()
+
+                    c.execute('UPDATE UserData SET permission = ? WHERE name =?', (permission, username))
+                    db.commit()
+
+                    c.execute('UPDATE UserData SET banned = ? WHERE name =?', (banned, username))
+                    db.commit()
+
+                    c.execute('SELECT * FROM UserData WHERE name =?', (username,))
+                    result = c.fetchall()
+                    for item in result:
+                        self.treeview.insert('', 0, values=item)
+        else:
+            pu.onNothingInTable()
+
+
+
+root = Tk()
+def on_closing():
+    root.withdraw()
+root.protocol("WM_DELETE_WINDOW", on_closing)
+pu = Popup(parent=root)
+root.geometry("600x500+300+300")
+lf = UpdateUserFrame(root)
+root.mainloop()
