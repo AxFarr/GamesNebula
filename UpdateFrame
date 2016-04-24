@@ -1,0 +1,62 @@
+from tkinter import *
+import tkinter.messagebox as tm
+import Users
+import re
+import sqlite3
+
+db = sqlite3.connect('game nebula.db')
+c = db.cursor()
+
+
+class UpdateFrame(Frame):
+    def __init__(self, master):
+        Frame.__init__(self, master)
+
+        self.master = master
+        self.mainUI()
+
+    def mainUI(self):
+
+        self.master.title("Games Nebula")
+        self.pack(fill=BOTH, expand=True)
+        root.resizable(width=FALSE, height=FALSE)
+
+        frame1 = Frame(self)
+        frame1.pack(fill=X)
+        frame2 = Frame(self)
+        frame2.pack(fill=X)
+        frame3 = Frame(self)
+        frame3.pack(fill=X)
+
+        self.label_1 = Label(frame1, text="Please select what you would like to update!", fg='green', relief='groove', width='40')
+        self.label_1.pack(side=TOP, padx=5, pady=5)
+
+        self.searchbtn = Button(frame2, text="Update Games", fg='green', command = self._games_btn_clicked)
+        self.searchbtn.pack(side=LEFT, padx=25, pady=20)
+        self.addbtn = Button(frame2, text="Update Publishers", fg='green', command=self._publishers_btn_clicked)
+        self.addbtn.pack(side=RIGHT, padx=25, pady=20)
+        self.updatebtn = Button(frame3, text="Update Users", fg='green', command=self._users_btn_clicked)
+        self.updatebtn.pack(side=BOTTOM, padx=40, pady=10)
+
+
+    def _games_btn_clicked(self):
+        import UpdateGame
+        UpdateGame.root.deiconify()
+
+
+    def _publishers_btn_clicked(self):
+        import UpdatePublisher
+        UpdatePublisher.root.deiconify()
+
+    def _users_btn_clicked(self):
+        import UpdateUser
+        UpdateUser.root.deiconify()
+
+
+root = Tk()
+def on_closing():
+    root.withdraw()
+root.protocol("WM_DELETE_WINDOW", on_closing)
+root.geometry("300x200+300+300")
+lf = UpdateFrame(root)
+root.mainloop()
