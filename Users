@@ -1,7 +1,17 @@
-def create_user(user, password, email, consoles = [], *args):
-    username = user
-    password = password
-    email = email
-    consolesOwned = list(consoles)
-    print("User " + username + " has been registered with the email: " + email + ", and he owns: ")
-    print([str(item) for item in consoles])
+class Users(object):
+    username = ""
+    password = ""
+    permission = 0
+
+
+    def __init__(self, username, password, permission):
+        self.username = username
+        self.password = password
+        self.permission = permission
+
+def create_user(username, password, permission):
+    User = Users(username, password, permission)
+    return User
+
+def getPermission(self):
+    return self.permission
