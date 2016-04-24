@@ -3,6 +3,7 @@ import tkinter.messagebox as tm
 import Users
 import re
 import sqlite3
+from Popup import *
 
 db = sqlite3.connect('game nebula.db')
 c = db.cursor()
@@ -19,6 +20,7 @@ class MainFrame(Frame):
 
         self.master.title("Games Nebula")
         self.pack(fill=BOTH, expand=True)
+        root.resizable(width=FALSE, height=FALSE)
 
         frame1 = Frame(self)
         frame1.pack(fill=X)
@@ -26,42 +28,107 @@ class MainFrame(Frame):
         frame2.pack(fill=X)
         frame3 = Frame(self)
         frame3.pack(fill=X)
+        frame4 = Frame(self)
+        frame4.pack(fill=X)
+        frame5 = Frame(self)
+        frame5.pack(fill=X)
 
-        self.label_1 = Label(frame1, text="Welcome to Games Nebula!", fg='green', relief='groove', width='40')
-        self.label_1.pack(side=TOP, padx=5, pady=5)
+        photo = PhotoImage(file="Games Nebula Logo.png")
+        w = Label(frame1, image=photo)
+        w.photo = photo
+        w.pack(side=TOP)
 
-        self.searchbtn = Button(frame2, text="Browse Games", fg='green', command = self._search_btn_clicked)
-        self.searchbtn.pack(side=LEFT, padx=25, pady=10)
-        self.addbtn = Button(frame2, text="Add games", fg='green', command=self._addbtn_btn_clicked)
+        self.searchbtn = Button(frame3, text="Browse Games", fg='green', command = self._search_btn_clicked)
+        self.searchbtn.pack(side=LEFT, padx=25, pady=30)
+        self.addbtn = Button(frame3, text="Add games", fg='green', command=self._addbtn_btn_clicked)
         self.addbtn.pack(side=RIGHT, padx=25, pady=10)
-        self.updatebtn = Button(frame3, text="Update", fg='green', command=self._update_btn_clicked)
+        self.updatebtn = Button(frame4, text="Update", fg='green', command=self._update_btn_clicked)
         self.updatebtn.pack(side=LEFT, padx=40, pady=10)
-        self.deletebtn = Button(frame3, text="Delete Games", fg='green', command=self._delete_btn_clicked)
-        self.deletebtn.pack(side=RIGHT, padx=25, pady=10)
+        self.deletebtn = Button(frame4, text="Delete", fg='green', command=self._delete_btn_clicked)
+        self.deletebtn.pack(side=RIGHT, padx=40, pady=10)
+        self.signoutbtn = Button(frame5, text="Sign Out", fg='red', height=1, command=self._signout_btn_clicked)
+        self.signoutbtn.pack(side=BOTTOM, padx=40)
 
 
     def _search_btn_clicked(self):
-        print("Searching")
         import GameSearch
         GameSearch.root.deiconify()
 
-
     def _addbtn_btn_clicked(self):
-        import Add
-        Add.root.deiconify()
+        hasPermission = 0
+        c.execute('SELECT name FROM UserData WHERE permission=1 OR 2 AND logged =1')
+        checkPermission = c.fetchall()
+        if not checkPermission:
+            hasPermission = 0
+        else:
+            hasPermission = 1
+
+        if hasPermission == 1:
+            import Add
+            Add.root.deiconify()
+        else:
+            pu.onNoPermission()
 
     def _update_btn_clicked(self):
-        print("Updating")
+        hasPermission = 0
+        c.execute('SELECT name FROM UserData WHERE permission=1 OR 2 AND logged =1')
+        checkPermission = c.fetchall()
+        if not checkPermission:
+            hasPermission = 0
+        else:
+            hasPermission = 1
+
+        if hasPermission == 1:
+            import UpdateFrame
+            UpdateFrame.root.deiconify()
+        else:
+            pu.onNoPermission()
 
     def _delete_btn_clicked(self):
-        import Delete
-        Delete.root.deiconify()
+        hasPermission = 0
+        c.execute('SELECT name FROM UserData WHERE permission=1 OR 2 AND logged =1')
+        checkPermission = c.fetchall()
+        if not checkPermission:
+            hasPermission = 0
+        else:
+            hasPermission = 1
+
+        if hasPermission == 1:
+            import Delete
+            Delete.root.deiconify()
+        else:
+            pu.onNoPermission()
+
+    def _signout_btn_clicked(self):
+        c.execute('SELECT name FROM UserData WHERE logged =1')
+        (checkUser,) = c.fetchone()
+        if not checkUser:
+            print("Unexpected error")
+        else:
+            c.execute('UPDATE UserData SET logged=0 WHERE name =?', ((checkUser,)))
+            db.commit()
+            root.withdraw()
+            import Login
+            Login.root.deiconify()
+
+    def _donothing_btn_clicked(self):
+        print("doing nothing")
 
 
-root = Tk()
+
+root = Toplevel()
 def on_closing():
-    root.withdraw()
+    c.execute('SELECT name FROM UserData WHERE logged = 1')
+    (data,) = c.fetchone()
+    if not data:
+        print("Unexpected error")
+    else:
+        c.execute('UPDATE UserData SET logged = 0 WHERE name=?', ((data,)))
+        db.commit()
+        root.withdraw()
+        db.commit()
 root.protocol("WM_DELETE_WINDOW", on_closing)
-root.geometry("300x200+300+300")
+pu = Popup(parent=root)
+root.geometry("300x250+300+300")
 lf = MainFrame(root)
 root.mainloop()
