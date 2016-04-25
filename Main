@@ -1,3 +1,15 @@
+from tkinter import *
+import tkinter.messagebox as tm
+import Users
+import re
+import sqlite3
+from Popup import *
+
+db = sqlite3.connect('game nebula.db')
+c = db.cursor()
+
+
+class MainFrame(Frame):
     def __init__(self, master):
         Frame.__init__(self, master)
 
@@ -101,3 +113,21 @@
 
     def _donothing_btn_clicked(self):
         print("doing nothing")
+
+
+
+root = Toplevel()
+def on_closing():
+    c.execute('SELECT name FROM UserData WHERE logged = 1')
+    (data,) = c.fetchone()
+    if not data:
+        print("Unexpected error")
+    else:
+        c.execute('UPDATE UserData SET logged = 0 WHERE name=?', ((data,)))
+        db.commit()
+        root.withdraw()
+root.protocol("WM_DELETE_WINDOW", on_closing)
+pu = Popup(parent=root)
+root.geometry("300x250+300+300")
+lf = MainFrame(root)
+root.mainloop()
