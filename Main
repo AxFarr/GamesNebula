@@ -1,15 +1,3 @@
-from tkinter import *
-import tkinter.messagebox as tm
-import Users
-import re
-import sqlite3
-from Popup import *
-
-db = sqlite3.connect('game nebula.db')
-c = db.cursor()
-
-
-class MainFrame(Frame):
     def __init__(self, master):
         Frame.__init__(self, master)
 
@@ -56,7 +44,7 @@ class MainFrame(Frame):
 
     def _addbtn_btn_clicked(self):
         hasPermission = 0
-        c.execute('SELECT name FROM UserData WHERE permission=1 OR 2 AND logged =1')
+        c.execute('SELECT name FROM UserData WHERE permission >= 1 AND logged =1')
         checkPermission = c.fetchall()
         if not checkPermission:
             hasPermission = 0
@@ -71,7 +59,7 @@ class MainFrame(Frame):
 
     def _update_btn_clicked(self):
         hasPermission = 0
-        c.execute('SELECT name FROM UserData WHERE permission=1 OR 2 AND logged =1')
+        c.execute('SELECT name FROM UserData WHERE permission >= 1 AND logged =1')
         checkPermission = c.fetchall()
         if not checkPermission:
             hasPermission = 0
@@ -86,7 +74,7 @@ class MainFrame(Frame):
 
     def _delete_btn_clicked(self):
         hasPermission = 0
-        c.execute('SELECT name FROM UserData WHERE permission=1 OR 2 AND logged =1')
+        c.execute('SELECT name FROM UserData WHERE permission >= 1 AND logged =1')
         checkPermission = c.fetchall()
         if not checkPermission:
             hasPermission = 0
@@ -113,22 +101,3 @@ class MainFrame(Frame):
 
     def _donothing_btn_clicked(self):
         print("doing nothing")
-
-
-
-root = Toplevel()
-def on_closing():
-    c.execute('SELECT name FROM UserData WHERE logged = 1')
-    (data,) = c.fetchone()
-    if not data:
-        print("Unexpected error")
-    else:
-        c.execute('UPDATE UserData SET logged = 0 WHERE name=?', ((data,)))
-        db.commit()
-        sys.exit()
-        db.commit()
-root.protocol("WM_DELETE_WINDOW", on_closing)
-pu = Popup(parent=root)
-root.geometry("300x250+300+300")
-lf = MainFrame(root)
-root.mainloop()
