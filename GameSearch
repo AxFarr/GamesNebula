@@ -54,9 +54,7 @@ class GameFrame(Frame):
         self.grid_rowconfigure(0, weight = 1)
         self.grid_columnconfigure(0, weight = 1)
         
-        
-        
-        
+                
         
     def gameUI(self):
 
@@ -128,25 +126,25 @@ class GameFrame(Frame):
         rating = self.rating_entry.get()
         multiplayer = self.multi_entry.get()
         
-        ps4 = 'False'
-        xbox = 'False'
-        wii = 'False'
-        pc = 'False'
-        egenre = 'False'
-        erating = 'False'
-        multi = 'False'
+        ps4 = False
+        xbox = False
+        wii = False
+        pc = False
+        egenre = False
+        erating = False
+        multi = False
         
         L = []
         
         if self.title_entry.get() is not None:
             if platform == 'PS4':
-                ps4 = 'True'
+                ps4 = True
             elif platform == 'XBoxOne':
-                xbox = 'True'
+                xbox = True
             elif platform == 'WiiU':
-                wii = 'True'
+                wii = True
             elif platform == 'Windows':
-                pc = 'True'
+                pc = True
             else:
                 itr = c.execute("SELECT DISTINCT * FROM games WHERE name = ?", [gameName]).fetchall()
                 for x in itr:
@@ -160,19 +158,19 @@ class GameFrame(Frame):
         
         if gameName == "":
             if platform == 'PS4':
-                ps4 = 'True'
+                ps4 = True
             elif platform == 'XBoxOne':
-                xbox = 'True'
+                xbox = True
             elif platform == 'WiiU':
-                wii = 'True'
+                wii = True
             elif platform == 'Windows':
-                pc = 'True'
+                pc = True
             elif genre is not 'Any':
-                egenre = 'True'
-            elif rating == 'Everyone' or rating == 'Teen' or rating == 'Mature':
-                erating = 'True'
+                egenre = True
+            elif rating is not 'Any':
+                erating = True
             elif multiplayer is not 'Any':
-                multi = 'True'
+                multi = True
                
             if platform == 'Any' and genre == 'Any' and rating == 'Any' and multiplayer == 'Any':
                 itr = c.execute("SELECT DISTINCT * FROM games").fetchall()
@@ -182,7 +180,7 @@ class GameFrame(Frame):
                         
 ######################################################################################################################################
 ######################################################################################################################################  
-            if ps4 == 'True':
+            if ps4 is True:
                 if platform == 'PS4' and genre == 'Action-Adventure':
                     if platform == 'PS4' and genre == 'Action-Adventure' and rating == 'Everyone':
                         if platform == 'PS4' and genre == 'Action Adventure' and rating == 'Everyone' and multiplayer == 'TRUE':
@@ -677,7 +675,7 @@ class GameFrame(Frame):
                 
 ###############################################################################################################################################
 ###############################################################################################################################################
-            elif xbox == 'True':
+            elif xbox is True:
                 if platform == 'XBoxOne' and genre == 'Action-Adventure':
                     if platform == 'XBoxOne' and genre == 'Action-Adventure' and rating == 'Everyone':
                         if platform == 'XBoxOne' and genre == 'Action Adventure' and rating == 'Everyone' and multiplayer == 'TRUE':
@@ -1172,7 +1170,7 @@ class GameFrame(Frame):
                         
 #########################################################################################################################################
 #########################################################################################################################################            
-            elif wii == 'True':
+            elif wii is True:
                 if platform == 'WiiU' and genre == 'Action-Adventure':
                     if platform == 'WiiU' and genre == 'Action-Adventure' and rating == 'Everyone':
                         if platform == 'WiiU' and genre == 'Action Adventure' and rating == 'Everyone' and multiplayer == 'TRUE':
@@ -1667,7 +1665,7 @@ class GameFrame(Frame):
                             
 #######################################################################################################################################
 #######################################################################################################################################
-            elif pc == 'True':
+            elif pc is True:
                 if platform == 'Windows' and genre == 'Action-Adventure':
                     if platform == 'Windows' and genre == 'Action-Adventure' and rating == 'Everyone':
                         if platform == 'Windows' and genre == 'Action Adventure' and rating == 'Everyone' and multiplayer == 'TRUE':
@@ -2162,7 +2160,7 @@ class GameFrame(Frame):
 ####################################################################################################################################
 ####################################################################################################################################    
                     
-            elif egenre == 'True':
+            elif egenre is True:
                 if genre == 'Action-Adventure' and rating == 'Everyone':
                     if genre == 'Action-Adventure' and rating == 'Everyone' and multiplayer == 'TRUE':
                         itr = c.execute("SELECT * from games where genre = 'Action-Adventure' and ESRB = 'Everyone' and multiplayer = 'TRUE'").fetchall()
@@ -2495,7 +2493,6 @@ class GameFrame(Frame):
                             if x not in L:
                                 L.append(x)
                     else:
-                        
                         itr = c.execute("SELECT * from games where genre = 'Rhythm Game' and ESRB = 'Mature'").fetchall()
                         for x in itr:
                             if x not in L:
@@ -2602,28 +2599,32 @@ class GameFrame(Frame):
                         if x not in L:
                             L.append(x)                
                        
-                if rating == 'Everyone' and platform == 'Any' and genre == 'Any' and multiplayer == 'Any':
-                    itr = c.execute("SELECT * FROM games where ESRB = 'Everyone'").fetchall()
+            if rating == 'Everyone' and multiplayer == 'Any' and platform == 'Any' and genre == 'Any':
+                    itr = c.execute("SELECT DISTINCT * from games where ESRB = 'Everyone'").fetchall()
                     for x in itr:
                         if x not in L:
                             L.append(x)
-                elif rating == 'Teen' and platform == 'Any' and genre == 'Any' and multiplayer == 'Any':
-                    itr = c.execute("SELECT * FROM games where ESRB = 'Teen'").fetchall()
-                    for x in itr:
-                        if x not in L:
-                            L.append(x)
-                elif rating == 'Mature' and platform == 'Any' and genre == 'Any' and multiplayer == 'Any':
-                    itr = c.execute("SELECT * FROM games where ESRB = 'Mature'").fetchall()
-                    for x in itr:
-                        if x not in L:
-                            L.append(x)
-                
-            '''               
-            elif multi == 'True':
-                itr = c.execute("SELECT DISTINCT * FROM games WHERE multiplayer = ?", [multiplayer]).fetchall()
-                    for x in itr:
-                        if x not in L:
-                            L.append(x)'''
+            elif rating == 'Teen' and multiplayer == 'Any' and platform == 'Any' and genre == 'Any':
+                itr = c.execute("SELECT DISTINCT * from games where ESRB = 'Teen'").fetchall()
+                for x in itr:
+                    if x not in L:
+                        L.append(x)
+            elif rating == 'Mature' and multiplayer == 'Any' and platform == 'Any' and genre == 'Any':
+                itr = c.execute("SELECT DISTINCT * from games where ESRB = 'Mature'").fetchall()
+                for x in itr:
+                    if x not in L:
+                        L.append(x)
+                          
+            if multiplayer == 'TRUE' and rating == 'Any' and platform == 'Any' and genre == 'Any':
+                itr = c.execute("SELECT DISTINCT * FROM games WHERE multiplayer = 'TRUE'").fetchall()
+                for x in itr:
+                    if x not in L:
+                        L.append(x)
+            if multiplayer == 'FALSE' and rating == 'Any' and platform == 'Any' and genre == 'Any':
+                itr = c.execute("SELECT DISTINCT * FROM games WHERE multiplayer = 'FALSE'").fetchall()
+                for x in itr:
+                    if x not in L:
+                        L.append(x)
                                 
                             
             for x in L:
