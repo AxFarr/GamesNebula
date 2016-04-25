@@ -4,6 +4,7 @@ import sqlite3
 from Popup import *
 import Users
 import re
+from tkinter.ttk import Treeview
 
 
 db = sqlite3.connect("game nebula.db")
@@ -43,22 +44,121 @@ class DeleteFrame(Frame):
             self.username_label.pack(side=LEFT, padx=5, pady=5)
             self.username_entry = Entry(frame2)
             self.username_entry.pack(side=LEFT, padx=5, pady=5)
+            self.table_label = Label(frame2, text="Select which table to display:", relief='groove')
+            self.table_label.pack(side=LEFT, padx=118)
 
             self.game_label = Label(frame3, text="Game to delete")
             self.game_label.pack(side=LEFT, padx=5, pady=5)
             self.game_entry = Entry(frame3)
             self.game_entry.pack(side=LEFT, padx=27, pady=5)
+            self.deletebtn = Button(frame3, text="Publisher Table", fg='green', command=self._showPubs_btn_clicked)
+            self.deletebtn.pack(side=LEFT, padx=25, pady=15)
+            self.backbtn = Button(frame3, text="Users Table", fg='green', command=self._showUsers_btn_clicked)
+            self.backbtn.pack(side=LEFT, pady=15)
+            self.backbtn = Button(frame3, text="Games Table", fg='green', command=self._showGames_btn_clicked)
+            self.backbtn.pack(side=LEFT, padx=25,pady=15)
+
 
             self.publisher_label = Label(frame4, text="Publisher to delete")
             self.publisher_label.pack(side=LEFT, padx=5, pady=5)
             self.publisher_entry = Entry(frame4)
             self.publisher_entry.pack(side=LEFT, padx=8, pady=5)
 
-            self.deletebtn = Button(frame5, text="Delete", fg='red', command=self._delete_btn_clicked)
-            self.deletebtn.pack(side=LEFT, padx=25, pady=15)
+            self.gs = Treeview(frame5)
+            scrollbar = Scrollbar(frame5, orient='vertical', command=self.gs.yview)
+            self.gs.configure(yscroll=scrollbar.set)
+            self.gs['columns'] = (
+                'name', 'genre', 'ESRB', 'publisher', 'release date', 'singleplayer', 'multiplayer', 'windows', 'ps4',
+                'xboxone', 'wiiu')
+            self.gs.heading("#0", text='', anchor='w')
+            self.gs.column("#0", width=0)
+            self.gs.heading('name', text='Title')
+            self.gs.column('name', anchor='n', width=250)
+            self.gs.heading('genre', text='Genre')
+            self.gs.column('genre', anchor='n', width=250)
+            self.gs.heading('ESRB', text='ESRB')
+            self.gs.column('ESRB', anchor='n', width=200)
+            self.gs.heading('publisher', text='Publisher')
+            self.gs.column('publisher', anchor='n', width=175)
+            self.gs.heading('release date', text='Release Date')
+            self.gs.column('release date', anchor='n', width=80)
+            self.gs.heading('singleplayer', text='Single Player')
+            self.gs.column('singleplayer', anchor='n', width=80)
+            self.gs.heading('multiplayer', text='Multi player')
+            self.gs.column('multiplayer', anchor='n', width=80)
+            self.gs.heading('windows', text='Windows')
+            self.gs.column('windows', anchor='n', width=60)
+            self.gs.heading('ps4', text='PS4')
+            self.gs.column('ps4', anchor='n', width=60)
+            self.gs.heading('xboxone', text='Xbox One')
+            self.gs.column('xboxone', anchor='n', width=60)
+            self.gs.heading('wiiu', text='WiiU')
+            self.gs.column('wiiu', anchor='n', width=60)
+            self.gs.pack(side=LEFT, pady=10)
+            scrollbar.pack(side=LEFT, fill=Y)
+            self.treeview = self.gs
+            self.grid_rowconfigure(0, weight=1)
+            self.grid_columnconfigure(0, weight=1)
 
-            self.backbtn = Button(frame5, text="Back", fg='black', command=self._back_btn_clicked)
+
+            c.execute('SELECT * FROM games')
+            result = c.fetchall()
+            for item in result:
+                self.treeview.insert('', 0, values=item)
+
+            self.deletebtn = Button(frame6, text="Delete", fg='red', command=self._delete_btn_clicked)
+            self.deletebtn.pack(side=LEFT, padx=25, pady=15)
+            self.backbtn = Button(frame6, text="Back", fg='black', command=self._back_btn_clicked)
             self.backbtn.pack(side=LEFT, pady=15)
+
+    def _showPubs_btn_clicked(self):
+        self.treeview.delete(*self.treeview.get_children())
+        self.gs["displaycolumns"] = ("name", "genre", "ESRB", "publisher")
+        self.gs.heading('name', text='Publisher')
+        self.gs.heading('genre', text='Address')
+        self.gs.heading('ESRB', text='President')
+        self.gs.heading('publisher', text='Founded')
+
+        c.execute('SELECT * FROM publishers')
+        result = c.fetchall()
+        for item in result:
+            self.treeview.insert('', 0, values=item)
+
+    def _showUsers_btn_clicked(self):
+        self.treeview.delete(*self.treeview.get_children())
+        self.gs["displaycolumns"] = ("name", "genre", "ESRB", "publisher", "release date", "singleplayer")
+        self.gs.heading('name', text='Username')
+        self.gs.heading('genre', text='Password')
+        self.gs.heading('ESRB', text='Email')
+        self.gs.heading('publisher', text='Permission')
+        self.gs.heading('release date', text='Banned')
+        self.gs.heading('singleplayer', text='Logged')
+
+        c.execute('SELECT * FROM UserData')
+        result = c.fetchall()
+        for item in result:
+            self.treeview.insert('', 0, values=item)
+
+    def _showGames_btn_clicked(self):
+        self.treeview.delete(*self.treeview.get_children())
+        self.gs["displaycolumns"] = ('name', 'genre', 'ESRB', 'publisher', 'release date', 'singleplayer', 'multiplayer', 'windows', 'ps4',
+                'xboxone', 'wiiu')
+        self.gs.heading('name', text='Title')
+        self.gs.heading('genre', text='Genre')
+        self.gs.heading('ESRB', text='ESRB')
+        self.gs.heading('publisher', text='Publisher')
+        self.gs.heading('release date', text='Release date')
+        self.gs.heading('singleplayer', text='Single Player')
+        self.gs.heading('multiplayer', text='Multi Player')
+        self.gs.heading('windows', text='Windows')
+        self.gs.heading('ps4', text='PS4')
+        self.gs.heading('xboxone', text='Xbox One')
+        self.gs.heading('wiiu', text='WiiU')
+
+        c.execute('SELECT * FROM games')
+        result = c.fetchall()
+        for item in result:
+            self.treeview.insert('', 0, values=item)
 
 
     def _delete_btn_clicked(self):
@@ -107,6 +207,10 @@ class DeleteFrame(Frame):
                     else:
                         _delete_user()
                         db.commit()
+                        c.execute('SELECT * FROM UserData')
+                        result = c.fetchall()
+                        for item in result:
+                            self.treeview.insert('', 0, values=item)
                         pu.onUserDeleted()
                 else:
                     pu.onDeleteSelf()
@@ -128,8 +232,12 @@ class DeleteFrame(Frame):
 
             if CheckGameExists(game) == True:
                 _delete_game()
-                pu.onGameDeleted()
                 db.commit()
+                c.execute('SELECT * FROM games')
+                result = c.fetchall()
+                for item in result:
+                    self.treeview.insert('', 0, values=item)
+                pu.onGameDeleted()
             else:
                 pu.onGameNonExistent()
 
@@ -148,6 +256,10 @@ class DeleteFrame(Frame):
               if CheckPublisherExists(publisher) == True:
                   _delete_publisher()
                   db.commit()
+                  c.execute('SELECT * FROM publishers')
+                  result = c.fetchall()
+                  for item in result:
+                      self.treeview.insert('', 0, values=item)
                   pu.onPubDeleted()
               else:
                   pu.onPublisherNonExistent()
@@ -166,5 +278,5 @@ def on_closing():
 root.protocol("WM_DELETE_WINDOW", on_closing)
 ft = DeleteFrame(master=root)
 pu = Popup(parent=root)
-root.geometry("350x225+300+300")
+root.geometry("1400x500+300+300")
 root.mainloop()
