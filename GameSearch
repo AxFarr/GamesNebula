@@ -3,7 +3,6 @@ from tkinter import ttk
 
 import sqlite3
 from tkinter.ttk import Treeview
-
 db = sqlite3.connect('game nebula.db')
 c = db.cursor()
 
@@ -26,30 +25,30 @@ class GameFrame(Frame):
         gs.heading("#0", text = '', anchor = 'n')
         gs.column("#0", width = 0)
         gs.heading('name', text = 'Name')
-        gs.column('name', anchor = 'e', width = 60)
+        gs.column('name', anchor = 'w', width = 150)
         gs.heading('genre', text = 'Genre')
-        gs.column('genre', anchor = 'e', width = 60)
+        gs.column('genre', anchor = 'n', width = 110)
         gs.heading('ESRB', text = 'ESRB')
-        gs.column('ESRB', anchor = 'e', width = 60)
+        gs.column('ESRB', anchor = 'n', width = 80)
         gs.heading('publisher', text = 'Publisher')
-        gs.column('publisher', anchor = 'e', width = 60)
+        gs.column('publisher', anchor = 'n', width = 167)
         gs.heading('release date', text = 'Release Date')
-        gs.column('release date', anchor = 'e', width = 60)
+        gs.column('release date', anchor = 'e', width = 80)
         gs.heading('singleplayer', text = 'Single Player')
-        gs.column('singleplayer', anchor = 'e', width = 60)
+        gs.column('singleplayer', anchor = 'n', width = 50)
         gs.heading('multiplayer', text = 'Multiplayer')
-        gs.column('multiplayer', anchor = 'e', width = 60)
+        gs.column('multiplayer', anchor = 'n', width = 50)
         gs.heading('windows', text = 'Windows')
-        gs.column('windows', anchor = 'e', width = 60)
+        gs.column('windows', anchor = 'n', width = 50)
         gs.heading('ps4', text = 'PS4')
-        gs.column('ps4', anchor = 'e', width = 60)
+        gs.column('ps4', anchor = 'n', width = 50)
         gs.heading('xboxone', text = 'XBoxOne')
-        gs.column('xboxone', anchor = 'e', width = 60)
+        gs.column('xboxone', anchor = 'n', width = 50)
         gs.heading('wiiu', text = 'WiiU')
-        gs.column('wiiu', anchor = 'e', width = 60)
+        gs.column('wiiu', anchor = 'n', width = 60)
         
         scrollbar.pack(side = RIGHT, fill = Y)
-        gs.pack(side = RIGHT, padx = 120)
+        gs.pack(side = RIGHT, padx = 20)
         self.treeview = gs
         self.grid_rowconfigure(0, weight = 1)
         self.grid_columnconfigure(0, weight = 1)
@@ -113,9 +112,11 @@ class GameFrame(Frame):
         self.multi_entry.pack(side = LEFT, padx=1)
         
 
-        self.Searchbtn = Button(frame6, text="Search", command = self._search_btn_clicked)
-        self.Searchbtn.pack(side=LEFT, padx=5)
-          
+        self.Searchbtn = Button(frame6, text="Search", fg = 'green', command = self._search_btn_clicked)
+        self.Searchbtn.pack(side=LEFT, padx=5, pady = 25)
+        
+        self.backbtn = Button(frame6, text = 'Back', fg = 'green', command = self._back_btn_clicked)
+        self.backbtn.pack(side = LEFT, padx = 5, pady = 25) 
         
         
     def _search_btn_clicked(self):
@@ -131,8 +132,6 @@ class GameFrame(Frame):
         wii = False
         pc = False
         egenre = False
-        erating = False
-        multi = False
         
         L = []
         
@@ -167,10 +166,6 @@ class GameFrame(Frame):
                 pc = True
             elif genre is not 'Any':
                 egenre = True
-            elif rating is not 'Any':
-                erating = True
-            elif multiplayer is not 'Any':
-                multi = True
                
             if platform == 'Any' and genre == 'Any' and rating == 'Any' and multiplayer == 'Any':
                 itr = c.execute("SELECT DISTINCT * FROM games").fetchall()
@@ -2629,7 +2624,11 @@ class GameFrame(Frame):
                             
             for x in L:
                 self.treeview.insert('', 0, values = x)
-                
+    
+    
+    def _back_btn_clicked(self):
+        root.destroy()
+        from Main import MainFrame
 
 
 
