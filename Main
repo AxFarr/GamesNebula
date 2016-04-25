@@ -125,7 +125,7 @@ def on_closing():
     else:
         c.execute('UPDATE UserData SET logged = 0 WHERE name=?', ((data,)))
         db.commit()
-        root.withdraw()
+        sys.exit()
         db.commit()
 root.protocol("WM_DELETE_WINDOW", on_closing)
 pu = Popup(parent=root)
