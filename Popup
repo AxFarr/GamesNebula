@@ -102,7 +102,11 @@ class Popup(Frame):
         tm.showwarning("Notice", "Nothing was selected to be updated")
 
     def onLogged(self):
-        tm.showinfo("Notice", "Successfully logged in!")
+        c.execute("select name from userdata where logged = 1")
+        (name,) = c.fetchone()
+        c.execute("select credits from userdata where name = ?", (name,))
+        (credits,) = c.fetchone()
+        tm.showinfo("Success", "Successfully logged in! You have " + str(credits) + " credits!")
 
     def onWrongLog(self):
         tm.showerror("Error", "Incorrect username or password")
@@ -123,7 +127,11 @@ class Popup(Frame):
         tm.showwarning("Warning", "You must enter a publisher to edit")
 
     def onAdminLogged(self):
-        tm.showinfo("Success", "Successfully logged in, Welcome Admin!")
+        c.execute("select name from userdata where logged = 1")
+        (name,) = c.fetchone()
+        c.execute("select credits from userdata where name = ?", (name,))
+        (credits,) = c.fetchone()
+        tm.showinfo("Success", "Successfully logged in, Welcome Admin! You have " + str(credits) + " credits!")
 
     def onNoPermission(self):
         tm.showerror("Error", "Only admins can access this feature!")
@@ -141,17 +149,24 @@ class Popup(Frame):
         tm.showerror("Error", "You can't update the owner's information!")
 
     def onOwnerLogged(self):
-        tm.showinfo("Success", "Successfully logged in, Welcome Owner!")
+        c.execute("select name from userdata where logged = 1")
+        (name,) = c.fetchone()
+        c.execute("select credits from userdata where name = ?", (name,))
+        (credits,) = c.fetchone()
+        tm.showinfo("Success", "Successfully logged in, Welcome Owner! You have " + str(credits) + " credits!")
 
-    def onGameBought(self):
-        tm.showinfo("Success", "Game Purchased! Table refreshed")
-        
     def onCreditAmount(self):
         c.execute("select name from userdata where logged = 1")
         (name,) = c.fetchone()
         c.execute("select credits from userdata where name = ?", (name,))
         (credits,)= c.fetchone()
-        tm.showinfo("Credits", "You Have " + credits + " credits")
+        tm.showinfo("Credits", "Game Purchased! Table refreshed. You now Have " + str(credits) + " credits")
+
+    def onInsufficientCredits(self):
+        tm.showerror("Error", "You don't have enough credits!")
+
+    def onOutStock(self):
+        tm.showerror("Error", "This game is currently out of stock, sorry.")
 
 
 def main():
