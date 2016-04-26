@@ -41,7 +41,7 @@ class AddFrame(Frame):
         frame4.pack(fill=X)
         frame5 = Frame(self)
         frame5.pack(fill=X)
-        frame6 = Frame(self)
+        frame6 = Frame(self, padx=30)
         frame6.pack(fill=X)
 
         self.add_label = Label(frame1, text="Add a Game", fg='green', relief='groove', width='80')
@@ -98,8 +98,12 @@ class AddFrame(Frame):
         for item in ["Windows", "PS4", "Xbox One", "WiiU"]:
             self.listbox.insert(END, item)
 
+        self.price_label = Label(frame6, text="Price", relief='groove')
+        self.price_label.pack(side=LEFT, padx=5, pady=5)
+        self.pSpinBox = Spinbox(frame6, values=('5','10','15','20','25','30'), width=8)
+        self.pSpinBox.pack(side=LEFT, pady=5, padx=10)
         self.addbtn = Button(frame6, text="Add game", command=self._addbtn_btn_clicked, fg='green', activebackground= 'green')
-        self.addbtn.pack(side=BOTTOM, padx=20, pady=20)
+        self.addbtn.pack(side=LEFT, padx=40, pady=5)
 
 
 
@@ -110,6 +114,8 @@ class AddFrame(Frame):
         rating = self.ratingBox.get()
         publisher = self.publisherBox.get()
         release = self.release_entry.get()
+        price = self.pSpinBox.get()
+        stock = 100
 
         SinglePlayer = self.spSpinBox.get()
         MultiPlayer = self.mpSpinBox.get()
@@ -152,8 +158,8 @@ class AddFrame(Frame):
             if len(gameName) == 0 or len(release) == 0:
                 pu.onNull()
             else:
-                c.execute('INSERT INTO games VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', (gameName, genre, rating, publisher, release, SinglePlayer, MultiPlayer, \
-                                                                                    Windows, PS4, XboxOne, WiiU))
+                c.execute('INSERT INTO games VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', (gameName, genre, rating, publisher, release, SinglePlayer, MultiPlayer, \
+                                                                                    Windows, PS4, XboxOne, WiiU, stock, price))
                 db.commit()
                 if publisher != 'Other':
                     pu.onGameAdded()
