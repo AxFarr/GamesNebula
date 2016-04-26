@@ -1,5 +1,9 @@
 from tkinter import *
 import tkinter.messagebox as tm
+import sqlite3
+
+db = sqlite3.connect('game nebula.db')
+c = db.cursor()
 
 class Popup(Frame):
 
@@ -141,7 +145,13 @@ class Popup(Frame):
 
     def onGameBought(self):
         tm.showinfo("Success", "Game Purchased! Table refreshed")
-
+        
+    def onCreditAmount(self):
+        c.execute("select name from userdata where logged = 1")
+        (name,) = c.fetchone()
+        c.execute("select credits from userdata where name = ?", (name,))
+        (credits,)= c.fetchone()
+        tm.showinfo("Credits", "You Have " + credits + " credits")
 
 
 def main():
