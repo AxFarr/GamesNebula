@@ -78,13 +78,13 @@ class UpdateUserFrame(Frame):
         gs.heading("#0", text='', anchor='w')
         gs.column("#0", width=0)
         gs.heading('name', text='Name')
-        gs.column('name', anchor='n', width=150)
+        gs.column('name', anchor='n', width=60)
         gs.heading('password', text='Password')
-        gs.column('password', anchor='n', width=150)
+        gs.column('password', anchor='n', width=100)
         gs.heading('email', text='Email')
         gs.column('email', anchor='n', width=150)
         gs.heading('permission', text='Permission')
-        gs.column('permission', anchor='n', width=150)
+        gs.column('permission', anchor='n', width=100)
         gs.heading('banned', text='Banned')
         gs.column('banned', anchor='n', width=100)
 
@@ -99,10 +99,6 @@ class UpdateUserFrame(Frame):
         self.addbtn = Button(frame7, text="Update User", command=self._update_btn_clicked, fg='green', activebackground= 'green')
         self.addbtn.pack(side=LEFT, padx=20, pady=20)
 
-        c.execute('SELECT * FROM UserData')
-        result = c.fetchall()
-        for item in result:
-            self.treeview.insert('', 0, values=item)
 
 
     def _search_btn_clicked(self):
