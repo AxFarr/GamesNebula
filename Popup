@@ -7,7 +7,190 @@ c = db.cursor()
 
 class Popup(Frame):
 
+    def __init__(self, parent):from tkinter import *
+import tkinter.messagebox as tm
+import sqlite3
+
+db = sqlite3.connect('game nebula.db')
+c = db.cursor()
+
+class Popup(Frame):
+
     def __init__(self, parent):
+        Frame.__init__(self, parent)
+
+        self.parent = parent
+
+
+#showerror, showwarning, askquestion, showinfo
+    def onUserAvail(self):
+        tm.showwarning("Notice", "Username is already taken.")
+
+    def onPasswordMatch(self):
+        tm.showerror("Error", "Passwords do not match.")
+
+    def onIncorrect(self):
+        tm.showerror("Error", "Username or password is incorrect.")
+
+    def onSpecialChar(self):
+        tm.showwarning("Warning", "Username or password must not contain special characters (ex: * & $ @)")
+
+    def onUserLength(self):
+        tm.showwarning("Warning", "Username must be 4-15 characters.")
+
+    def onPassLength(self):
+        tm.showwarning("Warning", "Password must be 4-15 characters.")
+
+    def onDelete(self):
+        tm.askquestion("Question", "Are you sure you want to delete?")
+
+    def onSearch(self):
+        tm.showinfo("Information", "Search done, no results.")
+
+    def onNullEntryDelete(self):
+        tm.showerror("Error", "Null Entry, no items were deleted")
+
+    def onUserNonExistent(self):
+        tm.showerror("Error", "Username doesn't exist")
+
+    def onGameNonExistent(self):
+        tm.showerror("Error", "Game doesn't exist")
+
+    def onMoreThanOneDelete(self):
+        tm.showwarning("Warning", "Please only choose one item to delete at a time")
+
+    def onPublisherNonExistent(self):
+        tm.showerror("Error", "Publisher doesn't exist")
+
+    def onMoreThanOneAdd(self):
+        tm.showerror("Error", "Please only choose one item to add at a time")
+
+    def onNullEntryAdd(self):
+        tm.showerror("Error", "Null Entry, no items were added")
+
+    def onNull(self):
+        tm.showerror("Error", "Null Entry")
+
+    def onGameAdded(self):
+        tm.showinfo("Information", "Game Successfully added!")
+
+    def onGameDeleted(self):
+        tm.showinfo("Information", "Game Successfully deleted!")
+
+    def onPublisherLength(self):
+        tm.showwarning("Notice", "Publisher field is either blank or has exceeded the character limit (30 characters).")
+
+    def onPublisherAdded(self):
+        tm.showinfo("Complete", "Publisher Added.")
+
+    def onPubisherExists(self):
+        tm.showerror("Error", "Publisher Already Exists.")
+
+    def onAddressLength(self):
+        tm.showwarning("Notice", "Address field is either blank or has exceeded the character limit (30 characters).")
+
+    def onPresidentLength(self):
+        tm.showwarning("Notice", "President field is either blank or has exceeded the character limit (30 characters).")
+
+    def onFoundedError(self):
+        tm.showwarning("Notice", "Year needs 4 digits or contains characters other than integers.")
+
+    def onOtherPub(self):
+        tm.showinfo("Notice", "The game was added successfully, but the publisher must now be established.")
+
+    def onUserDeleted(self):
+        tm.showinfo("Notice", "User has successfully been deleted")
+
+    def onNoName(self):
+        tm.showwarning("Warning", "You must enter a game name to edit")
+
+    def onNothingUpdated(self):
+        tm.showwarning("Notice", "No attributes were different, so nothing was updated")
+
+    def onNothingInTable(self):
+        tm.showwarning("Notice", "Nothing was selected to be updated")
+
+    def onLogged(self):
+        c.execute("select name from userdata where logged = 1")
+        (name,) = c.fetchone()
+        c.execute("select credits from userdata where name = ?", (name,))
+        (credits,) = c.fetchone()
+        tm.showinfo("Success", "Successfully logged in! You have " + str(credits) + " credits!")
+
+    def onWrongLog(self):
+        tm.showerror("Error", "Incorrect username or password")
+
+    def onReg(self):
+        tm.showinfo("Success", "Registration Successfull! You may now log-in.")
+
+    def onPubDeleted(self):
+        tm.showinfo("Success", "Publisher Deleted")
+
+    def onNoUser(self):
+        tm.showwarning("Warning", "You must enter a username to edit")
+
+    def onBanned(self):
+        tm.showwarning("Warning", "You are banned, sorry! :)")
+
+    def onNoPub(self):
+        tm.showwarning("Warning", "You must enter a publisher to edit")
+
+    def onAdminLogged(self):
+        c.execute("select name from userdata where logged = 1")
+        (name,) = c.fetchone()
+        c.execute("select credits from userdata where name = ?", (name,))
+        (credits,) = c.fetchone()
+        tm.showinfo("Success", "Successfully logged in, Welcome Admin! You have " + str(credits) + " credits!")
+
+    def onNoPermission(self):
+        tm.showerror("Error", "Only admins can access this feature!")
+
+    def onGameExists(self):
+        tm.showerror("Error", "Game already exists!")
+
+    def onDeleteSelf(self):
+        tm.showerror("Error", "You can't delete yourself!!")
+
+    def onDeleteOwner(self):
+        tm.showerror("Error", "Nice Try, you can't delete the owner!")
+
+    def onUpdateOwner(self):
+        tm.showerror("Error", "You can't update the owner's information!")
+
+    def onOwnerLogged(self):
+        c.execute("select name from userdata where logged = 1")
+        (name,) = c.fetchone()
+        c.execute("select credits from userdata where name = ?", (name,))
+        (credits,) = c.fetchone()
+        tm.showinfo("Success", "Successfully logged in, Welcome Owner! You have " + str(credits) + " credits!")
+
+    def onCreditAmount(self):
+        c.execute("select name from userdata where logged = 1")
+        (name,) = c.fetchone()
+        c.execute("select credits from userdata where name = ?", (name,))
+        (credits,)= c.fetchone()
+        tm.showinfo("Credits", "Game Purchased! Table refreshed. You now Have " + str(credits) + " credits")
+
+    def onInsufficientCredits(self):
+        tm.showerror("Error", "You don't have enough credits!")
+
+    def onOutStock(self):
+        tm.showerror("Error", "This game is currently out of stock, sorry.")
+
+    def onTitleOnly(self):
+        tm.showerror("Error", "When searching by title, please leave all parameters to 'Any'.")
+
+
+def main():
+
+    root = Tk()
+    pu = Popup(root)
+    root.mainloop()
+
+
+if __name__ == '__main__':
+    main()
+
         Frame.__init__(self, parent)
 
         self.parent = parent
