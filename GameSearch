@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter import ttk
 
+
 import sqlite3
 from tkinter.ttk import Treeview
 db = sqlite3.connect('game nebula.db')
@@ -60,6 +61,17 @@ class GameFrame(Frame):
                 
         
     def gameUI(self):
+        def loggedIn():
+            c.execute('SELECT name FROM UserData WHERE logged =1')
+            (checkUser,) = c.fetchone()
+            return checkUser
+        def getcredits(loggedIn):
+            logged = loggedIn
+            print(logged)
+            c.execute("SELECT credits from userdata where name = ?", [logged])
+            (data,) = c.fetchone()
+            return data
+            
 
         self.master.title("Game Search")
         root.resizable(width=FALSE, height=FALSE)
@@ -82,6 +94,8 @@ class GameFrame(Frame):
         
         self.Title_label = Label(frame1, text="Title")
         self.Title_label.pack(side=LEFT, padx=5, pady=5)
+        self.credit_label = Label(frame1, text= "You have: " + getcredits(loggedIn) + "credits")
+        self.credit_label.pack(side = LEFT, padx = 100, fg = 'green')
         self.plat_label = Label(frame3, text="Platform", pady=10)
         self.plat_label.pack(side=LEFT, padx =5, pady = 5)
         self.genre_label = Label(frame4, text="Genre")
@@ -121,7 +135,10 @@ class GameFrame(Frame):
         self.Searchbtn.pack(side=LEFT, padx=5, pady = 25)
         
         self.backbtn = Button(frame7, text = 'Back', fg = 'green', command = self._back_btn_clicked)
-        self.backbtn.pack(side = LEFT, padx = 5, pady = 25) 
+        self.backbtn.pack(side = LEFT, padx = 5, pady = 25)
+        
+        self.buybtn = Button(frame7, text = "Buy", fg = 'green', command = self._buy_btn_clicked) 
+        self.buybtn.pack(side = LEFT, padx = 5, pady = 25)
         
         
         
@@ -2636,6 +2653,44 @@ class GameFrame(Frame):
     def _back_btn_clicked(self):
         root.destroy()
         from Main import MainFrame
+        
+    
+    
+       
+        
+    def _buy_btn_clicked(self):
+        def whoLogged():        
+            c.execute('SELECT name FROM UserData WHERE logged =1')
+            (checkUser,) = c.fetchone()
+            return checkUser
+        
+        def getValue():
+            item = self.treeview.selection()
+            curItem = self.treeview.item(item)
+            item1 = curItem.get('values')
+            name = getName(item1)
+            c.execute("SELECT price from games where name = ?", [name])
+            (data,) = c.fetchone()
+            return data
+        
+        def getName(item1):    
+            return item1[0]
+        item = self.treeview.selection()
+        curItem = self.treeview.item(item)
+        item1 = curItem.get('values')
+        name = getName(item1)
+        c.execute("update games set stock = stock - 1  where name = ?", [name])
+        db.commit()
+        
+        logged = whoLogged()
+        c.execute("SELECT * FROM games")
+        result = c.fetchall()
+        for item in result:
+            self.treeview.insert('', 0, values=item)
+        value = getValue()
+        c.execute("update userdata set credits = credits - ? where name = ?", [value, logged])
+        db.commit()
+    
 
 
 
