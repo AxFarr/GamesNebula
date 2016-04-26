@@ -33,7 +33,7 @@ class MainFrame(Frame):
         frame5 = Frame(self)
         frame5.pack(fill=X)
 
-        photo = PhotoImage(file="Games Nebula Logo.png")
+        photo = PhotoImage(file="Games Nebula Logo2.png")
         w = Label(frame1, image=photo)
         w.photo = photo
         w.pack(side=TOP)
@@ -115,6 +115,7 @@ class MainFrame(Frame):
         print("doing nothing")
 
 
+    Tk().withdraw()
 
 root = Toplevel()
 def on_closing():
@@ -125,7 +126,7 @@ def on_closing():
     else:
         c.execute('UPDATE UserData SET logged = 0 WHERE name=?', ((data,)))
         db.commit()
-        root.withdraw()
+        sys.exit()
 root.protocol("WM_DELETE_WINDOW", on_closing)
 pu = Popup(parent=root)
 root.geometry("300x250+300+300")
