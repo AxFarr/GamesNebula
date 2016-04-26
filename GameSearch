@@ -2657,11 +2657,10 @@ class GameFrame(Frame):
                 self.treeview.insert('', 0, values = x)
 
 
+
     def _back_btn_clicked(self):
-        root.destroy()
-        from Main import MainFrame
-
-
+        root.withdraw()
+        #from Main import MainFrame
 
 
 
@@ -2726,6 +2725,9 @@ class GameFrame(Frame):
 
 
 root = Tk()
+def on_closing():
+    root.withdraw()
+root.protocol("WM_DELETE_WINDOW", on_closing)
 lf = GameFrame(root)
 root.geometry("1500x400+300+300")
 pu = Popup(parent=root)
