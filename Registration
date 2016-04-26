@@ -4,6 +4,9 @@ from Popup import *
 import Users
 import re
 import sqlite3
+import hashlib
+import bcrypt
+
 
 db = sqlite3.connect('game nebula.db')
 c = db.cursor()
@@ -62,6 +65,9 @@ class RegistrationFrame(Frame):
         self.regbtn.pack(side=BOTTOM)
 
 
+
+
+
     def _registration_btn_clicked(self):
         username = self.UserEntry.get()
         password = self.PassEntry.get()
@@ -72,6 +78,8 @@ class RegistrationFrame(Frame):
         permission = 0
         banned = 0
         logged = 0
+        credits = 30
+
 
         if len(self.UserEntry.get()) == 0 or len(self.PassEntry.get()) == 0\
            or len(self.PassReEntry.get()) == 0 or len(self.EmailEntry.get()) == 0 :
@@ -84,6 +92,8 @@ class RegistrationFrame(Frame):
             pu.onSpecialChar()
 
         else:
+
+
 
 
             def CheckRegExists(username):
@@ -106,14 +116,13 @@ class RegistrationFrame(Frame):
                     pu.onPasswordMatch()
                 else:
                     pu.onReg()
-                    c.execute('INSERT INTO UserData VALUES (?,?,?,?,?,?)', (username, password, email, permission, banned, logged))
+                    c.execute('INSERT INTO UserData VALUES (?,?,?,?,?,?,?)', (username, password, email, permission, banned, logged, credits))
 
 
                     Users.create_user(username, password, permission)
                     db.commit()
                     db.close()
                     root.destroy()
-
 
 
 root = Tk()
