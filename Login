@@ -5,6 +5,8 @@ from Popup import *
 import Users
 import re
 import tkinter as tk
+import hashlib
+import bcrypt
 
 
 
@@ -101,28 +103,34 @@ class LoginFrame(Frame):
                     else:
                         return True
 
+            def getCredits(username):
+                c.execute('SELECT credits FROM UserData WHERE name = ?', (username,))
+                (credits,) = c.fetchone()
+                return credits()
+
+
 
             if CheckUserExists(username, password) is True:
                 if CheckBan(username) is True:
                     pu.onBanned()
                 elif CheckOwner(username) is True:
-                    pu.onOwnerLogged()
                     c.execute('UPDATE UserData SET logged = 1 WHERE name =?', (username,))
                     db.commit()
+                    pu.onOwnerLogged()
                     root.withdraw()
                     import Main
                     Main.root.deiconify()
                 elif CheckAdmin(username) is True:
-                    pu.onAdminLogged()
                     c.execute('UPDATE UserData SET logged = 1 WHERE name =?', (username,))
                     db.commit()
+                    pu.onAdminLogged()
                     root.withdraw()
                     import Main
                     Main.root.deiconify()
                 else:
-                    pu.onLogged()
                     c.execute('UPDATE UserData SET logged = 1 WHERE name =?', (username,))
                     db.commit()
+                    pu.onLogged()
                     root.withdraw()
                     import Main
                     Main.root.deiconify()
