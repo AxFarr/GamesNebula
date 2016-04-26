@@ -139,6 +139,9 @@ class Popup(Frame):
     def onOwnerLogged(self):
         tm.showinfo("Success", "Successfully logged in, Welcome Owner!")
 
+    def onGameBought(self):
+        tm.showinfo("Success", "Game Purchased! Table refreshed")
+
 
 
 def main():
