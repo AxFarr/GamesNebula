@@ -18,7 +18,288 @@ class DeleteFrame(Frame):
         self.master = master
         self.logUI()
 
+    def logUI(self):from tkinter import *
+import tkinter.messagebox as tm
+import sqlite3
+from Popup import *
+import Users
+import re
+from tkinter.ttk import Treeview
+
+
+db = sqlite3.connect("game nebula.db")
+c = db.cursor()
+
+
+class DeleteFrame(Frame):
+    def __init__(self, master):
+        Frame.__init__(self, master)
+
+        self.master = master
+        self.logUI()
+
     def logUI(self):
+
+            self.master.title("Delete")
+            self.pack(fill=BOTH, expand=True)
+            root.resizable(width=FALSE, height=FALSE)
+
+            frame1 = Frame(self)
+            frame1.pack(fill=X)
+            frame2 = Frame(self)
+            frame2.pack(fill=X)
+            frame3 = Frame(self)
+            frame3.pack(fill=X)
+            frame4 = Frame(self)
+            frame4.pack(fill=X)
+            frame5 = Frame(self)
+            frame5.pack(fill=X)
+            frame6 = Frame(self)
+            frame6.pack(fill=X)
+
+            self.info_label = Label(frame1, text="Please enter the username, game, or publisher to be deleted. \n Only ONE at a time!")
+            self.info_label.pack(side=LEFT, padx=5, pady=14)
+
+            self.username_label = Label(frame2, text="Username to delete")
+            self.username_label.pack(side=LEFT, padx=5, pady=5)
+            self.username_entry = Entry(frame2)
+            self.username_entry.pack(side=LEFT, padx=5, pady=5)
+            self.table_label = Label(frame2, text="Select which table to display:", relief='groove')
+            self.table_label.pack(side=LEFT, padx=118)
+
+            self.game_label = Label(frame3, text="Game to delete")
+            self.game_label.pack(side=LEFT, padx=5, pady=5)
+            self.game_entry = Entry(frame3)
+            self.game_entry.pack(side=LEFT, padx=27, pady=5)
+            self.deletebtn = Button(frame3, text="Publisher Table", fg='green', command=self._showPubs_btn_clicked)
+            self.deletebtn.pack(side=LEFT, padx=25, pady=15)
+            self.backbtn = Button(frame3, text="Users Table", fg='green', command=self._showUsers_btn_clicked)
+            self.backbtn.pack(side=LEFT, pady=15)
+            self.backbtn = Button(frame3, text="Games Table", fg='green', command=self._showGames_btn_clicked)
+            self.backbtn.pack(side=LEFT, padx=25,pady=15)
+
+
+            self.publisher_label = Label(frame4, text="Publisher to delete")
+            self.publisher_label.pack(side=LEFT, padx=5, pady=5)
+            self.publisher_entry = Entry(frame4)
+            self.publisher_entry.pack(side=LEFT, padx=8, pady=5)
+
+            self.gs = Treeview(frame5)
+            scrollbar = Scrollbar(frame5, orient='vertical', command=self.gs.yview)
+            self.gs.configure(yscroll=scrollbar.set)
+            self.gs['columns'] = (
+                'name', 'genre', 'ESRB', 'publisher', 'release date', 'singleplayer', 'multiplayer', 'windows', 'ps4',
+                'xboxone', 'wiiu')
+            self.gs.heading("#0", text='', anchor='w')
+            self.gs.column("#0", width=0)
+            self.gs.heading('name', text='Title')
+            self.gs.column('name', anchor='n', width=250)
+            self.gs.heading('genre', text='Genre')
+            self.gs.column('genre', anchor='n', width=250)
+            self.gs.heading('ESRB', text='ESRB')
+            self.gs.column('ESRB', anchor='n', width=200)
+            self.gs.heading('publisher', text='Publisher')
+            self.gs.column('publisher', anchor='n', width=175)
+            self.gs.heading('release date', text='Release Date')
+            self.gs.column('release date', anchor='n', width=80)
+            self.gs.heading('singleplayer', text='Single Player')
+            self.gs.column('singleplayer', anchor='n', width=80)
+            self.gs.heading('multiplayer', text='Multi player')
+            self.gs.column('multiplayer', anchor='n', width=80)
+            self.gs.heading('windows', text='Windows')
+            self.gs.column('windows', anchor='n', width=60)
+            self.gs.heading('ps4', text='PS4')
+            self.gs.column('ps4', anchor='n', width=60)
+            self.gs.heading('xboxone', text='Xbox One')
+            self.gs.column('xboxone', anchor='n', width=60)
+            self.gs.heading('wiiu', text='WiiU')
+            self.gs.column('wiiu', anchor='n', width=60)
+            self.gs.pack(side=LEFT, pady=10)
+            scrollbar.pack(side=LEFT, fill=Y)
+            self.treeview = self.gs
+            self.grid_rowconfigure(0, weight=1)
+            self.grid_columnconfigure(0, weight=1)
+
+
+            c.execute('SELECT * FROM games')
+            result = c.fetchall()
+            for item in result:
+                self.treeview.insert('', 0, values=item)
+
+            self.deletebtn = Button(frame6, text="Delete", fg='red', command=self._delete_btn_clicked)
+            self.deletebtn.pack(side=LEFT, padx=25, pady=15)
+            self.backbtn = Button(frame6, text="Back", fg='black', command=self._back_btn_clicked)
+            self.backbtn.pack(side=LEFT, pady=15)
+
+    def _showPubs_btn_clicked(self):
+        self.treeview.delete(*self.treeview.get_children())
+        self.gs["displaycolumns"] = ("name", "genre", "ESRB", "publisher")
+        self.gs.heading('name', text='Publisher')
+        self.gs.heading('genre', text='Address')
+        self.gs.heading('ESRB', text='President')
+        self.gs.heading('publisher', text='Founded')
+
+        c.execute('SELECT * FROM publishers')
+        result = c.fetchall()
+        for item in result:
+            self.treeview.insert('', 0, values=item)
+
+    def _showUsers_btn_clicked(self):
+        self.treeview.delete(*self.treeview.get_children())
+        self.gs["displaycolumns"] = ("name", "genre", "ESRB", "publisher", "release date", "singleplayer")
+        self.gs.heading('name', text='Username')
+        self.gs.heading('genre', text='Password')
+        self.gs.heading('ESRB', text='Email')
+        self.gs.heading('publisher', text='Permission')
+        self.gs.heading('release date', text='Banned')
+        self.gs.heading('singleplayer', text='Logged')
+
+        c.execute('SELECT * FROM UserData')
+        result = c.fetchall()
+        for item in result:
+            self.treeview.insert('', 0, values=item)
+
+    def _showGames_btn_clicked(self):
+        self.treeview.delete(*self.treeview.get_children())
+        self.gs["displaycolumns"] = ('name', 'genre', 'ESRB', 'publisher', 'release date', 'singleplayer', 'multiplayer', 'windows', 'ps4',
+                'xboxone', 'wiiu')
+        self.gs.heading('name', text='Title')
+        self.gs.heading('genre', text='Genre')
+        self.gs.heading('ESRB', text='ESRB')
+        self.gs.heading('publisher', text='Publisher')
+        self.gs.heading('release date', text='Release date')
+        self.gs.heading('singleplayer', text='Single Player')
+        self.gs.heading('multiplayer', text='Multi Player')
+        self.gs.heading('windows', text='Windows')
+        self.gs.heading('ps4', text='PS4')
+        self.gs.heading('xboxone', text='Xbox One')
+        self.gs.heading('wiiu', text='WiiU')
+
+        c.execute('SELECT * FROM games')
+        result = c.fetchall()
+        for item in result:
+            self.treeview.insert('', 0, values=item)
+
+
+    def _delete_btn_clicked(self):
+        username = self.username_entry.get()
+        game = self.game_entry.get()
+        publisher = self.publisher_entry.get()
+
+        if len(self.username_entry.get()) == 0 and len(self.game_entry.get()) == 0 \
+           and len(self.publisher_entry.get()) == 0:
+             pu.onNullEntryDelete()
+        elif len(self.username_entry.get()) > 0 and len(self.game_entry.get()) > 0 and len(self.publisher_entry.get()) > 0:
+            pu.onMoreThanOneDelete()
+        elif len(self.username_entry.get()) > 0 and len(self.game_entry.get()) > 0:
+            pu.onMoreThanOneDelete()
+        elif len(self.username_entry.get()) > 0 and len(self.publisher_entry.get()) > 0:
+            pu.onMoreThanOneDelete()
+        elif len(self.game_entry.get()) > 0 and len(self.publisher_entry.get()) > 0:
+            pu.onMoreThanOneDelete()
+        else:
+
+
+          if len(self.username_entry.get()) > 0:
+            def CheckUserExists(username):
+                c.execute("SELECT name FROM UserData WHERE name=?", (username,))
+                data = c.fetchall()
+                if not data:
+                    return False
+                else:
+                    return True
+
+            def _delete_user():
+                c.execute("DELETE FROM UserData Where name=?", (username,))
+
+            def checkOwner(username):
+                c.execute("SELECT permission FROM UserData WHERE name=?", (username,))
+                (data,) = c.fetchone()
+                return data
+
+
+            if CheckUserExists(username) == True:
+                c.execute('SELECT name FROM UserData WHERE logged =1 AND name=?', (username,))
+                data = c.fetchone()
+                if not data:
+                    if checkOwner(username) == 2:
+                        pu.onDeleteOwner()
+                    else:
+                        _delete_user()
+                        db.commit()
+                        c.execute('SELECT * FROM UserData')
+                        result = c.fetchall()
+                        for item in result:
+                            self.treeview.insert('', 0, values=item)
+                        pu.onUserDeleted()
+                else:
+                    pu.onDeleteSelf()
+            else:
+                pu.onUserNonExistent()
+
+
+          if len(self.game_entry.get()) > 0:
+            def CheckGameExists(game):
+                c.execute("SELECT name FROM games WHERE name=?", (game,))
+                data = c.fetchall()
+                if not data:
+                    return False
+                else:
+                    return True
+
+            def _delete_game():
+                c.execute("DELETE FROM games Where name=?", (game,))
+
+            if CheckGameExists(game) == True:
+                _delete_game()
+                db.commit()
+                c.execute('SELECT * FROM games')
+                result = c.fetchall()
+                for item in result:
+                    self.treeview.insert('', 0, values=item)
+                pu.onGameDeleted()
+            else:
+                pu.onGameNonExistent()
+
+          if len(self.publisher_entry.get()) > 0:
+              def CheckPublisherExists(publisher):
+                  c.execute("SELECT name FROM publishers WHERE name=?", (publisher,))
+                  data = c.fetchall()
+                  if not data:
+                      return False
+                  else:
+                      return True
+
+              def _delete_publisher():
+                  c.execute("DELETE FROM publishers Where name=?", (publisher,))
+
+              if CheckPublisherExists(publisher) == True:
+                  _delete_publisher()
+                  db.commit()
+                  c.execute('SELECT * FROM publishers')
+                  result = c.fetchall()
+                  for item in result:
+                      self.treeview.insert('', 0, values=item)
+                  pu.onPubDeleted()
+              else:
+                  pu.onPublisherNonExistent()
+
+
+    def _back_btn_clicked(self):
+        print("Going back")
+
+
+
+
+
+root = Tk()
+def on_closing():
+    root.withdraw()
+root.protocol("WM_DELETE_WINDOW", on_closing)
+ft = DeleteFrame(master=root)
+pu = Popup(parent=root)
+root.geometry("1400x500+300+300")
+root.mainloop()
 
             self.master.title("Delete")
             self.pack(fill=BOTH, expand=True)
