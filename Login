@@ -5,7 +5,161 @@ from Popup import *
 import Users
 import re
 import tkinter as tk
+import hashlibfrom tkinter import *
+import tkinter.messagebox as tm
+import sqlite3
+from Popup import *
+import Users
+import re
+import tkinter as tk
 import hashlib
+import bcrypt
+
+
+
+db = sqlite3.connect("game nebula.db")
+c = db.cursor()
+
+
+class LoginFrame(Frame):
+    def __init__(self, master):
+        Frame.__init__(self, master)
+
+        self.master = master
+        self.logUI()
+
+    def logUI(self):
+
+            self.master.title("Login")
+            self.pack(fill=BOTH, expand=True)
+            root.resizable(width=FALSE, height=FALSE)
+
+            frame1 = Frame(self)
+            frame1.pack(fill=X)
+
+            photo = PhotoImage(file="Games Nebula Logo2.png")
+            w = Label(frame1, image=photo)
+            w.photo = photo
+            w.pack(side=TOP, pady=15)
+
+            frame2 = Frame(self)
+            frame2.pack(fill=X)
+
+            self.label_1 = Label(frame2, text="Username", width=7)
+            self.label_1.pack(side=LEFT, padx=5, pady=5)
+
+            self.entry_1 = Entry(frame2)
+            self.entry_1.pack(side=LEFT, padx=5)
+
+            frame3 = Frame(self)
+            frame3.pack(fill=X)
+
+            self.label_2 = Label(frame3, text="Password", width=7)
+            self.label_2.pack(side=LEFT, padx=5, pady=5)
+
+            self.entry_2 = Entry(frame3, show="*")
+            self.entry_2.pack(side=LEFT, padx=5)
+
+            frame4 = Frame(self)
+            frame4.pack(fill=X, padx=60)
+
+            self.logbtn = Button(frame4, text="Login", fg='green', command = self._login_btn_clicked)
+            self.logbtn.pack(side=LEFT, padx=5, pady=15)
+            self.regbtn = Button(frame4, text="Register", command=self._register_btn_clicked)
+            self.regbtn.pack(side=LEFT, padx=5, pady=15)
+
+
+    def _login_btn_clicked(self):
+        username = self.entry_1.get()
+        password = self.entry_2.get()
+
+
+        if len(self.entry_1.get()) == 0 or len(self.entry_2.get()) == 0 :
+            pu.onNull()
+        else:
+
+            def CheckUserExists(username, password):
+                if c.execute("SELECT password FROM UserData WHERE name = ? AND password = ?",  (username, password)):
+                   data = c.fetchall()
+                   if not data:
+                       return False
+                   else:
+                       return True
+
+            def CheckAdmin(username):
+                if c.execute("SELECT permission FROM UserData WHERE permission = 1 AND name = ?", (username,)):
+                    data = c.fetchall()
+                    if not data:
+                        return False
+                    else:
+                        return True
+
+            def CheckOwner(username):
+                if c.execute("SELECT permission FROM UserData WHERE permission = 2 AND name = ?", (username,)):
+                    data = c.fetchall()
+                    if not data:
+                        return False
+                    else:
+                        return True
+
+            def CheckBan(username):
+                if c.execute("SELECT banned FROM UserData WHERE name = ? AND banned = 1", (username,)):
+                    data = c.fetchall()
+                    if not data:
+                        return False
+                    else:
+                        return True
+
+            def getCredits(username):
+                c.execute('SELECT credits FROM UserData WHERE name = ?', (username,))
+                (credits,) = c.fetchone()
+                return credits()
+
+
+
+            if CheckUserExists(username, password) is True:
+                if CheckBan(username) is True:
+                    pu.onBanned()
+                elif CheckOwner(username) is True:
+                    c.execute('UPDATE UserData SET logged = 1 WHERE name =?', (username,))
+                    db.commit()
+                    pu.onOwnerLogged()
+                    root.withdraw()
+                    import Main
+                    Main.root.deiconify()
+                elif CheckAdmin(username) is True:
+                    c.execute('UPDATE UserData SET logged = 1 WHERE name =?', (username,))
+                    db.commit()
+                    pu.onAdminLogged()
+                    root.withdraw()
+                    import Main
+                    Main.root.deiconify()
+                else:
+                    c.execute('UPDATE UserData SET logged = 1 WHERE name =?', (username,))
+                    db.commit()
+                    pu.onLogged()
+                    root.withdraw()
+                    import Main
+                    Main.root.deiconify()
+
+            else:
+                pu.onWrongLog()
+
+    def _register_btn_clicked(self):
+        import Registration
+        Registration.root.deiconify()
+
+    Tk().withdraw()
+
+
+root = Toplevel()
+def on_closing():
+    sys.exit()
+root.protocol("WM_DELETE_WINDOW", on_closing)
+root.geometry("250x225+300+300")
+pu = Popup(parent=root)
+ft = LoginFrame(master=root)
+root.mainloop()
 import bcrypt
 
 
